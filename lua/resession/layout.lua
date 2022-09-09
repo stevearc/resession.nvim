@@ -11,6 +11,8 @@ M.get_win_info = function(tabnr, winid)
   end
   local win = {
     bufname = vim.api.nvim_buf_get_name(bufnr),
+    current = vim.api.nvim_get_current_win() == winid,
+    cursor = vim.api.nvim_win_get_cursor(winid),
   }
   local winnr = vim.api.nvim_win_get_number(winid)
   if vim.fn.haslocaldir(winnr, tabnr) == 1 then
@@ -52,12 +54,20 @@ end
 
 M.set_winlayout = function(layout)
   local type = layout[1]
+  local ret
   if type == "leaf" then
     local win = layout[2]
     local bufnr = vim.fn.bufadd(win.bufname)
     vim.api.nvim_win_set_buf(0, bufnr)
+    vim.api.nvim_win_set_cursor(0, win.cursor)
     if win.cwd then
       vim.cmd(string.format("lcd %s", win.cwd))
+    end
+    if win.current then
+      ret = {
+        winid = vim.api.nvim_get_current_win(),
+        cursor = win.cursor,
+      }
     end
   else
     for i, v in ipairs(layout[2]) do
@@ -68,9 +78,13 @@ M.set_winlayout = function(layout)
           vim.cmd("split")
         end
       end
-      M.set_winlayout(v)
+      local result = M.set_winlayout(v)
+      if result then
+        ret = result
+      end
     end
   end
+  return ret
 end
 
 return M

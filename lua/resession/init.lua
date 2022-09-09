@@ -18,7 +18,11 @@ end
 ---@return string
 local function get_session_file(name)
   local files = require("resession.files")
-  return files.get_stdpath_filename("data", "session", string.format("%s.json", name))
+  return files.get_stdpath_filename(
+    "data",
+    "session",
+    string.format("%s.json", name:gsub(files.sep, "_"))
+  )
 end
 
 ---@return string|nil
@@ -77,12 +81,18 @@ M.delete = function(name)
 end
 
 ---@class resession.SaveOpts
----@field detach nil|boolean
+---@field detach nil|boolean Immediately detach from the saved session
+---@field notify nil|boolean Notify on success
 
 ---@param name? string
 ---@param opts? resession.SaveOpts
 M.save = function(name, opts)
-  opts = opts or {}
+  opts = vim.tbl_extend("keep", opts or {}, {
+    notify = true,
+  })
+  if not name then
+    name = current_session
+  end
   if not name then
     vim.ui.input({ prompt = "Session name" }, function(selected)
       if selected then
@@ -128,6 +138,9 @@ M.save = function(name, opts)
   if not opts.detach then
     current_session = name
   end
+  if opts.notify then
+    vim.notify(string.format("Saved session %s", name))
+  end
 end
 
 local function close_everything()
@@ -141,12 +154,15 @@ local function close_everything()
 end
 
 ---@class resession.LoadOpts
----@field detach nil|boolean
+---@field detach nil|boolean Detach from session after loading
+---@field reset nil|boolean Close everthing before loading the session (default true)
 
 ---@param name? string
 ---@param opts? resession.LoadOpts
 M.load = function(name, opts)
-  opts = opts or {}
+  opts = vim.tbl_extend("keep", opts or {}, {
+    reset = true,
+  })
   local files = require("resession.files")
   local layout = require("resession.layout")
   if not name then
@@ -168,7 +184,11 @@ M.load = function(name, opts)
     vim.notify(string.format("Could not find session %s", name), vim.log.levels.ERROR)
     return
   end
-  close_everything()
+  if opts.reset then
+    close_everything()
+  else
+    vim.cmd("tabnew")
+  end
   vim.cmd(string.format("cd %s", data.cwd))
   for _, buf in ipairs(data.buffers) do
     local bufnr = vim.fn.bufadd(buf.name)
@@ -180,6 +200,7 @@ M.load = function(name, opts)
     end
   end
 
+  local curwin
   for i, tab in ipairs(data.tabs) do
     if i > 1 then
       vim.cmd("tabnew")
@@ -187,8 +208,12 @@ M.load = function(name, opts)
     if tab.cwd then
       vim.cmd(string.format("tcd %s", tab.cwd))
     end
-    layout.set_winlayout(tab.wins)
+    local win = layout.set_winlayout(tab.wins)
+    if win then
+      curwin = win
+    end
   end
+  vim.api.nvim_set_current_win(curwin.winid)
   if not opts.detach then
     current_session = name
   end
