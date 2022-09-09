@@ -1,8 +1,20 @@
 local M = {}
 
 local pending_config
+
+local function do_setup()
+  if pending_config then
+    require("resession.config").setup(pending_config)
+    pending_config = nil
+  end
+end
+
 M.setup = function(config)
   pending_config = config or {}
+  -- We have to complete the setup if we're autosaving
+  if pending_config.autosave_name then
+    do_setup()
+  end
 end
 
 ---@param name string
@@ -164,10 +176,7 @@ end
 for k, v in pairs(M) do
   if type(v) == "function" and k ~= "setup" then
     M[k] = function(...)
-      if pending_config then
-        require("resession.config").setup(pending_config)
-        pending_config = nil
-      end
+      do_setup()
       return v(...)
     end
   end
