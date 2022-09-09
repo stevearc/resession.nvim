@@ -1,19 +1,6 @@
 local util = require("resession.util")
 local M = {}
 
-local function list_compact(list)
-  local last_slot = 1
-  for _, v in ipairs(list) do
-    if v then
-      list[last_slot] = v
-      last_slot = last_slot + 1
-    end
-  end
-  while #list >= last_slot do
-    table.remove(list)
-  end
-end
-
 ---@param tabnr integer
 ---@param winid integer
 ---@return table|false
