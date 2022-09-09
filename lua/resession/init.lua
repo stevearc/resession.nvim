@@ -1,6 +1,7 @@
 local M = {}
 
 local pending_config
+local current_session
 
 local function do_setup()
   if pending_config then
@@ -11,10 +12,6 @@ end
 
 M.setup = function(config)
   pending_config = config or {}
-  -- We have to complete the setup if we're autosaving
-  if pending_config.autosave_name then
-    do_setup()
-  end
 end
 
 ---@param name string
@@ -22,6 +19,15 @@ end
 local function get_session_file(name)
   local files = require("resession.files")
   return files.get_stdpath_filename("data", "session", string.format("%s.json", name))
+end
+
+---@return string|nil
+M.get_current_session = function()
+  return current_session
+end
+
+M.detach_session = function()
+  current_session = nil
 end
 
 ---@return string[]
@@ -70,12 +76,17 @@ M.delete = function(name)
   end
 end
 
+---@class resession.SaveOpts
+---@field detach nil|boolean
+
 ---@param name? string
-M.save = function(name)
+---@param opts? resession.SaveOpts
+M.save = function(name, opts)
+  opts = opts or {}
   if not name then
     vim.ui.input({ prompt = "Session name" }, function(selected)
       if selected then
-        M.save(selected)
+        M.save(selected, opts)
       end
     end)
     return
@@ -114,6 +125,9 @@ M.save = function(name)
     tab.wins = layout.add_win_info_to_layout(tabnr, winlayout)
   end
   files.write_json_file(filename, data)
+  if not opts.detach then
+    current_session = name
+  end
 end
 
 local function close_everything()
@@ -126,8 +140,13 @@ local function close_everything()
   vim.bo.buflisted = false
 end
 
+---@class resession.LoadOpts
+---@field detach nil|boolean
+
 ---@param name? string
-M.load = function(name)
+---@param opts? resession.LoadOpts
+M.load = function(name, opts)
+  opts = opts or {}
   local files = require("resession.files")
   local layout = require("resession.layout")
   if not name then
@@ -138,7 +157,7 @@ M.load = function(name)
     end
     vim.ui.select(sessions, {}, function(selected)
       if selected then
-        M.load(selected)
+        M.load(selected, opts)
       end
     end)
     return
@@ -169,6 +188,9 @@ M.load = function(name)
       vim.cmd(string.format("tcd %s", tab.cwd))
     end
     layout.set_winlayout(tab.wins)
+  end
+  if not opts.detach then
+    current_session = name
   end
 end
 

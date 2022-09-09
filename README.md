@@ -9,5 +9,4 @@ TODO:
 - tab-scoped sessions
 - hooks for plugins
 - window size
-- config opts
 - documentation
