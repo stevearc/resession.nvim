@@ -14,23 +14,6 @@ M.setup = function(config)
   pending_config = config or {}
 end
 
-local hooks = {}
-
----@class resession.Hook
----@field on_save fun(): any
----@field on_load fun(data: any)
-
----@param name string
----@param hook resession.Hook
-M.add_hook = function(name, hook)
-  hooks[name] = hook
-end
-
----@param name string
-M.remove_hook = function(name)
-  hooks[name] = nil
-end
-
 ---@param name string
 ---@return string
 local function get_session_file(name)
@@ -99,6 +82,35 @@ M.delete = function(name)
   end
 end
 
+local function extension_save(name)
+  local has_ext, ext = pcall(require, string.format("resession.extensions.%s", name))
+  if not has_ext then
+    vim.notify(string.format("[resession] Missing extension '%s'", name), vim.log.levels.WARN)
+    return
+  end
+  local ok, data = pcall(ext.on_save)
+  if ok then
+    return data
+  else
+    vim.notify(
+      string.format("[resession] Extension %s error: %s", name, data),
+      vim.log.levels.ERROR
+    )
+  end
+end
+
+local function extension_load(name, data)
+  local has_ext, ext = pcall(require, string.format("resession.extensions.%s", name))
+  if not has_ext then
+    vim.notify(string.format("[resession] Missing extension '%s'", name), vim.log.levels.WARN)
+    return
+  end
+  local ok, err = pcall(ext.on_load, data)
+  if not ok then
+    vim.notify(string.format("[resession] Extension %s error: %s", name, err), vim.log.levels.ERROR)
+  end
+end
+
 ---@class resession.SaveOpts
 ---@field detach nil|boolean Immediately detach from the saved session
 ---@field notify nil|boolean Notify on success
@@ -154,22 +166,17 @@ M.save = function(name, opts)
     tab.wins = layout.add_win_info_to_layout(tabnr, winlayout)
   end
 
-  for k, hook in pairs(hooks) do
-    if data[k] then
+  for _, ext_name in ipairs(config.extensions) do
+    if data[ext_name] then
       vim.notify(
-        string.format("[resession] Cannot run hook named '%s'; it conflicts with built-in data", k),
+        string.format(
+          "[resession] Cannot run extension named '%s'; it conflicts with built-in data",
+          ext_name
+        ),
         vim.log.levels.WARN
       )
     else
-      local ok, hookdata = pcall(hook.on_save)
-      if ok then
-        data[k] = hookdata
-      else
-        vim.notify(
-          string.format("[resession] Hook %s error: %s", k, hookdata),
-          vim.log.levels.ERROR
-        )
-      end
+      data[ext_name] = extension_save(ext_name)
     end
   end
 
@@ -202,6 +209,7 @@ M.load = function(name, opts)
   opts = vim.tbl_extend("keep", opts or {}, {
     reset = true,
   })
+  local config = require("resession.config")
   local files = require("resession.files")
   local layout = require("resession.layout")
   if not name then
@@ -254,12 +262,9 @@ M.load = function(name, opts)
   end
   vim.api.nvim_set_current_win(curwin.winid)
 
-  for k, hook in pairs(hooks) do
-    if data[k] then
-      local ok, err = pcall(hook.on_load)
-      if not ok then
-        vim.notify(string.format("[resession] Hook %s error: %s", k, err), vim.log.levels.ERROR)
-      end
+  for _, ext_name in ipairs(config.extensions) do
+    if data[ext_name] then
+      extension_load(ext_name, data[ext_name])
     end
   end
 

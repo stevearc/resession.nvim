@@ -6,6 +6,7 @@ local default_config = {
     options = { "buflisted" },
     only_loaded = true,
   },
+  extensions = {},
 }
 
 M.setup = function(config)
