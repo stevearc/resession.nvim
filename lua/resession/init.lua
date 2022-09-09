@@ -14,6 +14,23 @@ M.setup = function(config)
   pending_config = config or {}
 end
 
+local hooks = {}
+
+---@class resession.Hook
+---@field on_save fun(): any
+---@field on_load fun(data: any)
+
+---@param name string
+---@param hook resession.Hook
+M.add_hook = function(name, hook)
+  hooks[name] = hook
+end
+
+---@param name string
+M.remove_hook = function(name)
+  hooks[name] = nil
+end
+
 ---@param name string
 ---@return string
 local function get_session_file(name)
@@ -25,12 +42,14 @@ local function get_session_file(name)
   )
 end
 
+---Get the name of the current session
 ---@return string|nil
-M.get_current_session = function()
+M.get_current = function()
   return current_session
 end
 
-M.detach_session = function()
+---Detach from the current session
+M.detach = function()
   current_session = nil
 end
 
@@ -134,6 +153,26 @@ M.save = function(name, opts)
     local winlayout = vim.fn.winlayout(tabnr)
     tab.wins = layout.add_win_info_to_layout(tabnr, winlayout)
   end
+
+  for k, hook in pairs(hooks) do
+    if data[k] then
+      vim.notify(
+        string.format("[resession] Cannot run hook named '%s'; it conflicts with built-in data", k),
+        vim.log.levels.WARN
+      )
+    else
+      local ok, hookdata = pcall(hook.on_save)
+      if ok then
+        data[k] = hookdata
+      else
+        vim.notify(
+          string.format("[resession] Hook %s error: %s", k, hookdata),
+          vim.log.levels.ERROR
+        )
+      end
+    end
+  end
+
   files.write_json_file(filename, data)
   if not opts.detach then
     current_session = name
@@ -214,6 +253,16 @@ M.load = function(name, opts)
     end
   end
   vim.api.nvim_set_current_win(curwin.winid)
+
+  for k, hook in pairs(hooks) do
+    if data[k] then
+      local ok, err = pcall(hook.on_load)
+      if not ok then
+        vim.notify(string.format("[resession] Hook %s error: %s", k, err), vim.log.levels.ERROR)
+      end
+    end
+  end
+
   if not opts.detach then
     current_session = name
   end
