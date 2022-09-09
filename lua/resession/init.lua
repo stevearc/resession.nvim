@@ -37,6 +37,27 @@ M.list = function()
   return ret
 end
 
+M.delete = function(name)
+  local files = require("resession.files")
+  if not name then
+    local sessions = M.list()
+    if vim.tbl_isempty(sessions) then
+      vim.notify("No saved sessions", vim.log.levels.WARN)
+      return
+    end
+    vim.ui.select(sessions, {}, function(selected)
+      if selected then
+        M.delete(selected)
+      end
+    end)
+    return
+  end
+  local filename = get_session_file(name)
+  if not files.delete_file(filename) then
+    error(string.format("No session '%s'", filename))
+  end
+end
+
 ---@param name? string
 M.save = function(name)
   if not name then
