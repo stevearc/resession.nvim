@@ -191,7 +191,9 @@ end
 
 local function close_everything()
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-    vim.api.nvim_buf_delete(bufnr, { force = true })
+    if vim.bo[bufnr].buflisted then
+      vim.api.nvim_buf_delete(bufnr, { force = true })
+    end
   end
   vim.cmd("silent! tabonly")
   vim.cmd("silent! only")
@@ -283,7 +285,9 @@ M.load = function(name, opts)
   for k, v in pairs(data.global.options) do
     vim.o[k] = v
   end
-  if not opts.detach then
+  if opts.detach then
+    current_session = nil
+  else
     current_session = name
   end
 end

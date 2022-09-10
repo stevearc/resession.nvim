@@ -6,7 +6,6 @@ This is a work in progress
 
 TODO:
 
-- periodic saving
 - tab-scoped sessions
 - documentation
 - make filepaths relative so sessions are portable

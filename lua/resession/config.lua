@@ -1,6 +1,13 @@
 local M = {}
 
 local default_config = {
+  autosave = {
+    enabled = false,
+    -- How often to save (in seconds)
+    interval = 60,
+    -- Notify when autosaved
+    notify = true,
+  },
   buffers = {
     -- Only save buffers with these buftypes
     buftypes = { "", "acwrite", "help" },
@@ -64,10 +71,29 @@ local default_config = {
   extensions = {},
 }
 
+local autosave_timer
 M.setup = function(config)
+  local resession = require("resession")
   local newconf = vim.tbl_deep_extend("force", default_config, config)
   for k, v in pairs(newconf) do
     M[k] = v
+  end
+  if autosave_timer then
+    autosave_timer:close()
+    autosave_timer = nil
+  end
+  if M.autosave.enabled then
+    autosave_timer = vim.loop.new_timer()
+    timer = vim.loop.new_timer()
+    timer:start(
+      M.autosave.interval * 1000,
+      M.autosave.interval * 1000,
+      vim.schedule_wrap(function()
+        if resession.get_current() then
+          resession.save(nil, { notify = M.autosave.notify })
+        end
+      end)
+    )
   end
 end
 
