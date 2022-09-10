@@ -10,19 +10,10 @@ local function do_setup()
   end
 end
 
+---Initialize resession with configuration options
+---@param config table
 M.setup = function(config)
   pending_config = config or {}
-end
-
----@param name string
----@return string
-local function get_session_file(name)
-  local files = require("resession.files")
-  return files.get_stdpath_filename(
-    "data",
-    "session",
-    string.format("%s.json", name:gsub(files.sep, "_"))
-  )
 end
 
 ---Get the name of the current session
@@ -38,8 +29,9 @@ end
 
 ---@return string[]
 M.list = function()
+  local config = require("resession.config")
   local files = require("resession.files")
-  local session_dir = files.get_stdpath_filename("data", "session")
+  local session_dir = config.get_session_dir()
   if not files.exists(session_dir) then
     return {}
   end
@@ -63,6 +55,7 @@ end
 
 M.delete = function(name)
   local files = require("resession.files")
+  local config = require("resession.config")
   if not name then
     local sessions = M.list()
     if vim.tbl_isempty(sessions) then
@@ -76,7 +69,7 @@ M.delete = function(name)
     end)
     return
   end
-  local filename = get_session_file(name)
+  local filename = config.get_session_file(name)
   if not files.delete_file(filename) then
     error(string.format("No session '%s'", filename))
   end
@@ -136,11 +129,18 @@ M.save = function(name, opts)
   local files = require("resession.files")
   local layout = require("resession.layout")
   local util = require("resession.util")
-  local filename = get_session_file(name)
+  local filename = config.get_session_file(name)
   local data = {
     buffers = {},
     tabs = {},
-    cwd = vim.fn.getcwd(-1, -1),
+    global = {
+      cwd = vim.fn.getcwd(-1, -1),
+      height = vim.o.lines - vim.o.cmdheight,
+      width = vim.o.columns,
+      options = {
+        cmdheight = vim.o.cmdheight,
+      },
+    },
   }
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
     if util.should_save_buffer(bufnr) then
@@ -225,7 +225,7 @@ M.load = function(name, opts)
     end)
     return
   end
-  local filename = get_session_file(name)
+  local filename = config.get_session_file(name)
   local data = files.load_json_file(filename)
   if not data then
     vim.notify(string.format("Could not find session %s", name), vim.log.levels.ERROR)
@@ -236,7 +236,15 @@ M.load = function(name, opts)
   else
     vim.cmd("tabnew")
   end
-  vim.cmd(string.format("cd %s", data.cwd))
+  -- Set the options immediately
+  for k, v in pairs(data.global.options) do
+    vim.o[k] = v
+  end
+  local scale = {
+    vim.o.columns / data.global.width,
+    (vim.o.lines - vim.o.cmdheight) / data.global.height,
+  }
+  vim.cmd(string.format("cd %s", data.global.cwd))
   for _, buf in ipairs(data.buffers) do
     local bufnr = vim.fn.bufadd(buf.name)
     if buf.loaded then
@@ -255,12 +263,15 @@ M.load = function(name, opts)
     if tab.cwd then
       vim.cmd(string.format("tcd %s", tab.cwd))
     end
-    local win = layout.set_winlayout(tab.wins)
+    local win = layout.set_winlayout(tab.wins, scale)
     if win then
       curwin = win
     end
   end
-  vim.api.nvim_set_current_win(curwin.winid)
+  -- This can be nil if we saved a session in a window with an unsupported buffer
+  if curwin then
+    vim.api.nvim_set_current_win(curwin)
+  end
 
   for _, ext_name in ipairs(config.extensions) do
     if data[ext_name] then
@@ -268,6 +279,10 @@ M.load = function(name, opts)
     end
   end
 
+  -- We re-apply the options because sometimes the cmdheight gets messed up for some reason
+  for k, v in pairs(data.global.options) do
+    vim.o[k] = v
+  end
   if not opts.detach then
     current_session = name
   end

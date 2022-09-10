@@ -5,7 +5,8 @@ A replacement for `:mksession` with a better API
 This is a work in progress
 
 TODO:
+
 - periodic saving
 - tab-scoped sessions
-- window size
 - documentation
+- make filepaths relative so sessions are portable
