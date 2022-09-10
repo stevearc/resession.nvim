@@ -82,7 +82,16 @@ M.setup = function(config)
     autosave_timer:close()
     autosave_timer = nil
   end
+  local autosave_group = vim.api.nvim_create_augroup("ResessionAutosave", { clear = true })
   if M.autosave.enabled then
+    vim.api.nvim_create_autocmd("VimLeavePre", {
+      group = autosave_group,
+      callback = function()
+        if resession.get_current() then
+          resession.save(nil, { notify = false })
+        end
+      end,
+    })
     autosave_timer = vim.loop.new_timer()
     timer = vim.loop.new_timer()
     timer:start(
