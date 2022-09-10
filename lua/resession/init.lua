@@ -31,7 +31,8 @@ end
 M.list = function()
   local config = require("resession.config")
   local files = require("resession.files")
-  local session_dir = config.get_session_dir()
+  local util = require("resession.util")
+  local session_dir = util.get_session_dir()
   if not files.exists(session_dir) then
     return {}
   end
@@ -55,7 +56,7 @@ end
 
 M.delete = function(name)
   local files = require("resession.files")
-  local config = require("resession.config")
+  local util = require("resession.util")
   if not name then
     local sessions = M.list()
     if vim.tbl_isempty(sessions) then
@@ -69,7 +70,7 @@ M.delete = function(name)
     end)
     return
   end
-  local filename = config.get_session_file(name)
+  local filename = util.get_session_file(name)
   if not files.delete_file(filename) then
     error(string.format("No session '%s'", filename))
   end
@@ -132,7 +133,7 @@ M.save = function(name, opts)
   local files = require("resession.files")
   local layout = require("resession.layout")
   local util = require("resession.util")
-  local filename = config.get_session_file(name)
+  local filename = util.get_session_file(name)
   local data = {
     buffers = {},
     tabs = {},
@@ -140,21 +141,16 @@ M.save = function(name, opts)
       cwd = vim.fn.getcwd(-1, -1),
       height = vim.o.lines - vim.o.cmdheight,
       width = vim.o.columns,
-      options = {
-        cmdheight = vim.o.cmdheight,
-      },
+      options = util.save_global_options(),
     },
   }
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-    if util.should_save_buffer(bufnr) then
+    if config.buffers.filter(bufnr) then
       local buf = {
         name = vim.api.nvim_buf_get_name(bufnr),
         loaded = vim.api.nvim_buf_is_loaded(bufnr),
-        options = {},
+        options = util.save_buf_options(bufnr),
       }
-      for _, option in ipairs(config.buffers.options) do
-        buf.options[option] = vim.bo[bufnr][option]
-      end
       table.insert(data.buffers, buf)
     end
   end
@@ -208,7 +204,9 @@ end
 
 local function close_everything()
   local scratch = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_win_set_buf(scratch)
+  vim.api.nvim_buf_set_option(scratch, "buflisted", false)
+  vim.api.nvim_buf_set_option(scratch, "bufhidden", "wipe")
+  vim.api.nvim_win_set_buf(0, scratch)
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
     if vim.bo[bufnr].buflisted then
       vim.api.nvim_buf_delete(bufnr, { force = true })
@@ -216,8 +214,6 @@ local function close_everything()
   end
   vim.cmd("silent! tabonly")
   vim.cmd("silent! only")
-  vim.bo.bufhidden = "wipe"
-  vim.bo.buflisted = false
 end
 
 ---@class resession.LoadOpts
@@ -234,6 +230,7 @@ M.load = function(name, opts)
   local config = require("resession.config")
   local files = require("resession.files")
   local layout = require("resession.layout")
+  local util = require("resession.util")
   if not name then
     local sessions = M.list()
     if vim.tbl_isempty(sessions) then
@@ -247,7 +244,7 @@ M.load = function(name, opts)
     end)
     return
   end
-  local filename = config.get_session_file(name)
+  local filename = util.get_session_file(name)
   local data = files.load_json_file(filename)
   if not data then
     if not opts.silence_errors then
@@ -261,9 +258,7 @@ M.load = function(name, opts)
     open_clean_tab()
   end
   -- Set the options immediately
-  for k, v in pairs(data.global.options) do
-    vim.o[k] = v
-  end
+  util.restore_global_options(data.global.options)
   local scale = {
     vim.o.columns / data.global.width,
     (vim.o.lines - vim.o.cmdheight) / data.global.height,
@@ -274,9 +269,7 @@ M.load = function(name, opts)
     if buf.loaded then
       vim.fn.bufload(bufnr)
     end
-    for opt, v in pairs(buf.options) do
-      vim.bo[bufnr][opt] = v
-    end
+    util.restore_buf_options(bufnr, buf.options)
   end
 
   local curwin

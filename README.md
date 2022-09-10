@@ -18,8 +18,8 @@ A: While it's amazing that this feature is built-in to vim, and it does an impre
 - [ ] documentation
 - [ ] make filepaths relative so sessions are portable
 - [ ] extensions can add supported buffers (e.g. nvim-tree, aerial)
-- [ ] omit default option values so we can shrink the session file
 - [ ] can pass `dir` in to save/load/list
+- [ ] quickfix
 
 ## Requirements
 

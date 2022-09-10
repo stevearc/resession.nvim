@@ -7,7 +7,7 @@ local M = {}
 ---@return table|false
 M.get_win_info = function(tabnr, winid)
   local bufnr = vim.api.nvim_win_get_buf(winid)
-  if not util.should_save_buffer(bufnr) then
+  if not config.buffers.filter(bufnr) then
     return false
   end
   local win = {
@@ -16,11 +16,8 @@ M.get_win_info = function(tabnr, winid)
     cursor = vim.api.nvim_win_get_cursor(winid),
     width = vim.api.nvim_win_get_width(winid),
     height = vim.api.nvim_win_get_height(winid),
-    options = {},
+    options = util.save_win_options(winid),
   }
-  for _, opt in ipairs(config.windows.options) do
-    win.options[opt] = vim.api.nvim_win_get_option(winid, opt)
-  end
   local winnr = vim.api.nvim_win_get_number(winid)
   if vim.fn.haslocaldir(winnr, tabnr) == 1 then
     win.cwd = vim.fn.getcwd(winnr, tabnr)
@@ -104,10 +101,11 @@ local function set_winlayout_data(layout, scale_factor)
     local win = layout[2]
     local bufnr = vim.fn.bufadd(win.bufname)
     vim.api.nvim_win_set_buf(win.winid, bufnr)
+    -- After setting the buffer into the window, manually set the filetype to trigger syntax
+    -- highlighting
+    vim.api.nvim_buf_set_option(bufnr, "filetype", vim.api.nvim_buf_get_option(bufnr, "filetype"))
     vim.api.nvim_win_set_cursor(win.winid, win.cursor)
-    for k, v in pairs(win.options) do
-      vim.api.nvim_win_set_option(win.winid, k, v)
-    end
+    util.restore_win_options(win.winid, win.options)
     local width_scale = vim.wo[win.winid].winfixwidth and 1 or scale_factor[1]
     vim.api.nvim_win_set_width(win.winid, scale(win.width, width_scale))
     local height_scale = vim.wo[win.winid].winfixheight and 1 or scale_factor[2]
