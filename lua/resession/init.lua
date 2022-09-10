@@ -27,12 +27,17 @@ M.detach = function()
   current_session = nil
 end
 
+---@class resession.ListOpts
+---@field dir nil|string Name of directory to save to (overrides config.dir)
+
+---@params opts nil|resession.ListOpts
 ---@return string[]
-M.list = function()
+M.list = function(opts)
+  opts = opts or {}
   local config = require("resession.config")
   local files = require("resession.files")
   local util = require("resession.util")
-  local session_dir = util.get_session_dir()
+  local session_dir = util.get_session_dir(opts.dir)
   if not files.exists(session_dir) then
     return {}
   end
@@ -54,7 +59,13 @@ M.list = function()
   return ret
 end
 
-M.delete = function(name)
+---@class resession.DeleteOpts
+---@field dir nil|string Name of directory to save to (overrides config.dir)
+
+---@param name string
+---@param opts nil|resession.DeleteOpts
+M.delete = function(name, opts)
+  opts = opts or {}
   local files = require("resession.files")
   local util = require("resession.util")
   if not name then
@@ -70,7 +81,7 @@ M.delete = function(name)
     end)
     return
   end
-  local filename = util.get_session_file(name)
+  local filename = util.get_session_file(name, opts.dir)
   if not files.delete_file(filename) then
     error(string.format("No session '%s'", filename))
   end
@@ -79,38 +90,10 @@ M.delete = function(name)
   end
 end
 
-local function extension_save(name)
-  local has_ext, ext = pcall(require, string.format("resession.extensions.%s", name))
-  if not has_ext then
-    vim.notify(string.format("[resession] Missing extension '%s'", name), vim.log.levels.WARN)
-    return
-  end
-  local ok, data = pcall(ext.on_save)
-  if ok then
-    return data
-  else
-    vim.notify(
-      string.format("[resession] Extension %s error: %s", name, data),
-      vim.log.levels.ERROR
-    )
-  end
-end
-
-local function extension_load(name, data)
-  local has_ext, ext = pcall(require, string.format("resession.extensions.%s", name))
-  if not has_ext then
-    vim.notify(string.format("[resession] Missing extension '%s'", name), vim.log.levels.WARN)
-    return
-  end
-  local ok, err = pcall(ext.on_load, data)
-  if not ok then
-    vim.notify(string.format("[resession] Extension %s error: %s", name, err), vim.log.levels.ERROR)
-  end
-end
-
 ---@class resession.SaveOpts
 ---@field detach nil|boolean Immediately detach from the saved session
 ---@field notify nil|boolean Notify on success
+---@field dir nil|string Name of directory to save to (overrides config.dir)
 
 ---@param name? string
 ---@param opts? resession.SaveOpts
@@ -133,7 +116,7 @@ M.save = function(name, opts)
   local files = require("resession.files")
   local layout = require("resession.layout")
   local util = require("resession.util")
-  local filename = util.get_session_file(name)
+  local filename = util.get_session_file(name, opts.dir)
   local data = {
     buffers = {},
     tabs = {},
@@ -165,17 +148,18 @@ M.save = function(name, opts)
     tab.wins = layout.add_win_info_to_layout(tabnr, winlayout)
   end
 
-  for _, ext_name in ipairs(config.extensions) do
-    if data[ext_name] then
-      vim.notify(
-        string.format(
-          "[resession] Cannot run extension named '%s'; it conflicts with built-in data",
-          ext_name
-        ),
-        vim.log.levels.WARN
-      )
-    else
-      data[ext_name] = extension_save(ext_name)
+  for ext_name in pairs(config.extensions) do
+    local ext = util.get_extension(ext_name)
+    if ext then
+      local ok, ext_data = pcall(ext.on_save)
+      if ok then
+        vim.notify(
+          string.format("[resession] Extension %s save error: %s", ext_name, ext_data),
+          vim.log.levels.ERROR
+        )
+      else
+        data[ext_name] = ext_data
+      end
     end
   end
 
@@ -220,6 +204,7 @@ end
 ---@field detach nil|boolean Detach from session after loading
 ---@field reset nil|boolean Close everthing before loading the session (default true)
 ---@field silence_errors nil|boolean Don't error when trying to load a missing session
+---@field dir nil|string Name of directory to load from (overrides config.dir)
 
 ---@param name? string
 ---@param opts? resession.LoadOpts
@@ -244,7 +229,7 @@ M.load = function(name, opts)
     end)
     return
   end
-  local filename = util.get_session_file(name)
+  local filename = util.get_session_file(name, opts.dir)
   local data = files.load_json_file(filename)
   if not data then
     if not opts.silence_errors then
@@ -290,9 +275,18 @@ M.load = function(name, opts)
     vim.api.nvim_set_current_win(curwin)
   end
 
-  for _, ext_name in ipairs(config.extensions) do
+  for ext_name in pairs(config.extensions) do
     if data[ext_name] then
-      extension_load(ext_name, data[ext_name])
+      local ext = util.get_extension(ext_name)
+      if ext then
+        local ok, err = pcall(ext.on_load, data)
+        if not ok then
+          vim.notify(
+            string.format("[resession] Extension %s load error: %s", ext_name, err),
+            vim.log.levels.ERROR
+          )
+        end
+      end
     end
   end
 

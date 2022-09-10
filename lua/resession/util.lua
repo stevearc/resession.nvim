@@ -1,6 +1,17 @@
 local config = require("resession.config")
 local M = {}
 
+---@param name
+---@return resession.Extension
+M.get_extension = function(name)
+  local has_ext, ext = pcall(require, string.format("resession.extensions.%s", name))
+  if has_ext then
+    return ext
+  else
+    vim.notify_once(string.format("[resession] Missing extension '%s'", name), vim.log.levels.WARN)
+  end
+end
+
 ---@return table<string, any>
 M.save_global_options = function()
   local ret = {}
@@ -71,18 +82,20 @@ M.restore_buf_options = function(bufnr, opts)
   end
 end
 
+---@param dirname? string
 ---@return string
-M.get_session_dir = function()
+M.get_session_dir = function(dirname)
   local files = require("resession.files")
-  return files.get_stdpath_filename("data", config.dir)
+  return files.get_stdpath_filename("data", dirname or config.dir)
 end
 
 ---@param name string The name of the session
+---@param dirname? string
 ---@return string
-M.get_session_file = function(name)
+M.get_session_file = function(name, dirname)
   local files = require("resession.files")
   local filename = string.format("%s.json", name:gsub(files.sep, "_"))
-  return files.join(M.get_session_dir(), filename)
+  return files.join(M.get_session_dir(dirname), filename)
 end
 
 return M

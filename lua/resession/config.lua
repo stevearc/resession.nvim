@@ -34,13 +34,16 @@ local default_config = {
   windows = {},
   -- The name of the directory to store sessions in
   dir = "session",
-  -- List of extensions
-  extensions = {},
+  -- Configuration for extensions
+  extensions = {
+    quickfix = {},
+  },
 }
 
 local autosave_timer
 M.setup = function(config)
   local resession = require("resession")
+  local util = require("resession.util")
   local newconf = vim.tbl_deep_extend("force", default_config, config)
 
   if newconf.options.save_all then
@@ -49,6 +52,13 @@ M.setup = function(config)
 
   for k, v in pairs(newconf) do
     M[k] = v
+  end
+
+  for ext_name, ext_config in pairs(M.extensions) do
+    local ext = util.get_extension(ext_name)
+    if ext and ext.config then
+      ext.config(ext_config)
+    end
   end
 
   if autosave_timer then

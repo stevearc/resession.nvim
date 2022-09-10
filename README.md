@@ -18,7 +18,6 @@ A: While it's amazing that this feature is built-in to vim, and it does an impre
 - [ ] documentation
 - [ ] make filepaths relative so sessions are portable
 - [ ] extensions can add supported buffers (e.g. nvim-tree, aerial)
-- [ ] can pass `dir` in to save/load/list
 - [ ] quickfix
 
 ## Requirements
