@@ -73,6 +73,9 @@ M.delete = function(name)
   if not files.delete_file(filename) then
     error(string.format("No session '%s'", filename))
   end
+  if current_session == name then
+    current_session = nil
+  end
 end
 
 local function extension_save(name)
@@ -189,7 +192,23 @@ M.save = function(name, opts)
   end
 end
 
+local function open_clean_tab()
+  -- Detect if we're already in a "clean" tab
+  -- (one window, and one empty scratch buffer)
+  if #vim.api.nvim_tabpage_list_wins(0) == 1 then
+    if vim.api.nvim_buf_get_name(0) == "" then
+      local lines = vim.api.nvim_buf_get_lines(0, -1, 2, false)
+      if #lines == 1 and lines[1] == "" then
+        return
+      end
+    end
+  end
+  vim.cmd("tabnew")
+end
+
 local function close_everything()
+  local scratch = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_win_set_buf(scratch)
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
     if vim.bo[bufnr].buflisted then
       vim.api.nvim_buf_delete(bufnr, { force = true })
@@ -204,6 +223,7 @@ end
 ---@class resession.LoadOpts
 ---@field detach nil|boolean Detach from session after loading
 ---@field reset nil|boolean Close everthing before loading the session (default true)
+---@field silence_errors nil|boolean Don't error when trying to load a missing session
 
 ---@param name? string
 ---@param opts? resession.LoadOpts
@@ -230,13 +250,15 @@ M.load = function(name, opts)
   local filename = config.get_session_file(name)
   local data = files.load_json_file(filename)
   if not data then
-    vim.notify(string.format("Could not find session %s", name), vim.log.levels.ERROR)
+    if not opts.silence_errors then
+      error(string.format("Could not find session %s", name))
+    end
     return
   end
   if opts.reset then
     close_everything()
   else
-    vim.cmd("tabnew")
+    open_clean_tab()
   end
   -- Set the options immediately
   for k, v in pairs(data.global.options) do
