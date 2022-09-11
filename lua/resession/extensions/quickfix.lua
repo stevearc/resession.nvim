@@ -1,7 +1,6 @@
 local M = {}
 
 M.on_save = function()
-  local list = vim.fn.getqflist()
   return vim.tbl_map(function(item)
     return {
       filename = item.bufnr and vim.api.nvim_buf_get_name(item.bufnr),

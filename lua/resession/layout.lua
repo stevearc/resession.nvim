@@ -85,7 +85,7 @@ local function set_winlayout(layout)
     end
   else
     local winids = {}
-    for i, v in ipairs(layout[2]) do
+    for i in ipairs(layout[2]) do
       if i > 1 then
         if type == "row" then
           vim.cmd("vsplit")
@@ -146,7 +146,7 @@ local function set_winlayout_data(layout, scale_factor, visit_data)
       visit_data.winid = win.winid
     end
   else
-    for i, v in ipairs(layout[2]) do
+    for _, v in ipairs(layout[2]) do
       set_winlayout_data(v, scale_factor, visit_data)
     end
   end

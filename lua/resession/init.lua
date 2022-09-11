@@ -39,7 +39,6 @@ end
 ---@return string[]
 M.list = function(opts)
   opts = opts or {}
-  local config = require("resession.config")
   local files = require("resession.files")
   local util = require("resession.util")
   local session_dir = util.get_session_dir(opts.dir)
@@ -114,7 +113,6 @@ local function save(name, opts, target_tabpage)
   local layout = require("resession.layout")
   local util = require("resession.util")
   local filename = util.get_session_file(name, opts.dir)
-  local cwd
   local data = {
     buffers = {},
     tabs = {},

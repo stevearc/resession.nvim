@@ -48,10 +48,6 @@ M.setup = function(config)
   local util = require("resession.util")
   local newconf = vim.tbl_deep_extend("force", default_config, config)
 
-  if newconf.options.save_all then
-    newconf.options.include = options.all_options
-  end
-
   for k, v in pairs(newconf) do
     M[k] = v
   end
@@ -76,8 +72,7 @@ M.setup = function(config)
       end,
     })
     autosave_timer = vim.loop.new_timer()
-    timer = vim.loop.new_timer()
-    timer:start(
+    autosave_timer:start(
       M.autosave.interval * 1000,
       M.autosave.interval * 1000,
       vim.schedule_wrap(function()
