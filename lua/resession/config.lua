@@ -22,16 +22,17 @@ local default_config = {
     "winfixheight",
     "winfixwidth",
   },
-  buffers = {
-    -- Custom logic for determining if the buffer should be included
-    filter = function(bufnr)
-      if not vim.tbl_contains({ "", "acwrite", "help" }, vim.bo[bufnr].buftype) then
-        return false
-      end
-      return true
-    end,
-  },
-  windows = {},
+  -- Custom logic for determining if the buffer should be included
+  buf_filter = function(bufnr)
+    if not vim.tbl_contains({ "", "acwrite", "help" }, vim.bo[bufnr].buftype) then
+      return false
+    end
+    return vim.bo[bufnr].buflisted
+  end,
+  -- Custom logic for determining if a buffer should be included in a tab-scoped session
+  tab_buf_filter = function(tabpage, bufnr)
+    return true
+  end,
   -- The name of the directory to store sessions in
   dir = "session",
   -- Configuration for extensions
@@ -70,9 +71,7 @@ M.setup = function(config)
     vim.api.nvim_create_autocmd("VimLeavePre", {
       group = autosave_group,
       callback = function()
-        if resession.get_current() then
-          resession.save(nil, { notify = false })
-        end
+        resession.save_all({ notify = false })
       end,
     })
     autosave_timer = vim.loop.new_timer()
@@ -81,9 +80,7 @@ M.setup = function(config)
       M.autosave.interval * 1000,
       M.autosave.interval * 1000,
       vim.schedule_wrap(function()
-        if resession.get_current() then
-          resession.save(nil, { notify = M.autosave.notify })
-        end
+        resession.save_all({ notify = M.autosave.notify })
       end)
     )
   end

@@ -2,6 +2,7 @@ local M = {}
 
 local pending_config
 local current_session
+local tab_sessions = {}
 
 local function do_setup()
   if pending_config then
@@ -19,12 +20,15 @@ end
 ---Get the name of the current session
 ---@return string|nil
 M.get_current = function()
-  return current_session
+  local tabpage = vim.api.nvim_get_current_tabpage()
+  return tab_sessions[tabpage] or current_session
 end
 
 ---Detach from the current session
 M.detach = function()
   current_session = nil
+  local tabpage = vim.api.nvim_get_current_tabpage()
+  tab_sessions[tabpage] = nil
 end
 
 ---@class resession.ListOpts
@@ -59,6 +63,15 @@ M.list = function(opts)
   return ret
 end
 
+local function remove_tabpage_session(name)
+  for k, v in pairs(tab_sessions) do
+    if v == name then
+      tab_sessions[k] = nil
+      break
+    end
+  end
+end
+
 ---@class resession.DeleteOpts
 ---@field dir nil|string Name of directory to save to (overrides config.dir)
 
@@ -88,47 +101,33 @@ M.delete = function(name, opts)
   if current_session == name then
     current_session = nil
   end
+  remove_tabpage_session(name)
 end
 
----@class resession.SaveOpts
----@field detach nil|boolean Immediately detach from the saved session
----@field notify nil|boolean Notify on success
----@field dir nil|string Name of directory to save to (overrides config.dir)
-
----@param name? string
----@param opts? resession.SaveOpts
-M.save = function(name, opts)
-  opts = vim.tbl_extend("keep", opts or {}, {
-    notify = true,
-  })
-  if not name then
-    name = current_session
-  end
-  if not name then
-    vim.ui.input({ prompt = "Session name" }, function(selected)
-      if selected then
-        M.save(selected, opts)
-      end
-    end)
-    return
-  end
+---@param name string
+---@param opts resession.SaveOpts
+---@param target_tabpage? integer
+local function save(name, opts, target_tabpage)
   local config = require("resession.config")
   local files = require("resession.files")
   local layout = require("resession.layout")
   local util = require("resession.util")
   local filename = util.get_session_file(name, opts.dir)
+  local cwd
   local data = {
     buffers = {},
     tabs = {},
+    tab_scoped = target_tabpage ~= nil,
     global = {
       cwd = vim.fn.getcwd(-1, -1),
       height = vim.o.lines - vim.o.cmdheight,
       width = vim.o.columns,
-      options = util.save_global_options(),
+      -- Don't save global options for tab-scoped session
+      options = target_tabpage and {} or util.save_global_options(),
     },
   }
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-    if config.buffers.filter(bufnr) then
+    if util.include_buf(target_tabpage, bufnr) then
       local buf = {
         name = vim.api.nvim_buf_get_name(bufnr),
         loaded = vim.api.nvim_buf_is_loaded(bufnr),
@@ -137,20 +136,24 @@ M.save = function(name, opts)
       table.insert(data.buffers, buf)
     end
   end
-  for _, tabpage in ipairs(vim.api.nvim_list_tabpages()) do
+  local tabpages = target_tabpage and { target_tabpage } or vim.api.nvim_list_tabpages()
+  local buf_filter = function(bufnr)
+    return util.include_buf(target_tabpage, bufnr)
+  end
+  for _, tabpage in ipairs(tabpages) do
     local tab = {}
     local tabnr = vim.api.nvim_tabpage_get_number(tabpage)
-    if vim.fn.haslocaldir(-1, tabnr) == 1 then
+    if target_tabpage or vim.fn.haslocaldir(-1, tabnr) == 1 then
       tab.cwd = vim.fn.getcwd(-1, tabnr)
     end
     table.insert(data.tabs, tab)
     local winlayout = vim.fn.winlayout(tabnr)
-    tab.wins = layout.add_win_info_to_layout(tabnr, winlayout)
+    tab.wins = layout.add_win_info_to_layout(tabnr, winlayout, buf_filter)
   end
 
-  for ext_name in pairs(config.extensions) do
+  for ext_name, ext_config in pairs(config.extensions) do
     local ext = util.get_extension(ext_name)
-    if ext then
+    if ext and (ext_config.enable_in_tab or not target_tabpage) then
       local ok, ext_data = pcall(ext.on_save)
       if ok then
         data[ext_name] = ext_data
@@ -164,11 +167,85 @@ M.save = function(name, opts)
   end
 
   files.write_json_file(filename, data)
-  if not opts.detach then
-    current_session = name
-  end
   if opts.notify then
     vim.notify(string.format("Saved session %s", name))
+  end
+end
+
+---@class resession.SaveOpts
+---@field attach nil|boolean Stay attached to session after saving
+---@field notify nil|boolean Notify on success
+---@field dir nil|string Name of directory to save to (overrides config.dir)
+
+---@param name? string
+---@param opts? resession.SaveOpts
+M.save = function(name, opts)
+  opts = vim.tbl_extend("keep", opts or {}, {
+    notify = true,
+    attach = true,
+  })
+  if not name then
+    -- If no name, default to the current session
+    name = current_session
+  end
+  if not name then
+    vim.ui.input({ prompt = "Session name" }, function(selected)
+      if selected then
+        M.save(selected, opts)
+      end
+    end)
+    return
+  end
+  save(name, opts)
+  tab_sessions = {}
+  if opts.attach then
+    current_session = name
+  else
+    current_session = nil
+  end
+end
+
+---Save a tab-scoped session
+---@param name string
+---@param opts? resession.SaveOpts
+M.save_tab = function(name, opts)
+  opts = vim.tbl_extend("keep", opts or {}, {
+    notify = true,
+    attach = true,
+  })
+  local cur_tabpage = vim.api.nvim_get_current_tabpage()
+  if not name then
+    name = tab_sessions[cur_tabpage]
+  end
+  if not name then
+    vim.ui.input({ prompt = "Session name" }, function(selected)
+      if selected then
+        M.save_tab(selected, opts)
+      end
+    end)
+    return
+  end
+  save(name, opts, cur_tabpage)
+  current_session = nil
+  remove_tabpage_session(name)
+  if opts.attach then
+    tab_sessions[cur_tabpage] = name
+  else
+    tab_sessions[cur_tabpage] = nil
+  end
+end
+
+---Save all current sessions to disk
+M.save_all = function(opts)
+  opts = vim.tbl_extend("keep", opts or {}, {
+    notify = true,
+  })
+  if current_session then
+    save(current_session, opts)
+  else
+    for tabpage, name in pairs(tab_sessions) do
+      save(name, opts, tabpage)
+    end
   end
 end
 
@@ -178,7 +255,9 @@ local function open_clean_tab()
   if #vim.api.nvim_tabpage_list_wins(0) == 1 then
     if vim.api.nvim_buf_get_name(0) == "" then
       local lines = vim.api.nvim_buf_get_lines(0, -1, 2, false)
-      if #lines == 1 and lines[1] == "" then
+      if vim.tbl_isempty(lines) then
+        vim.api.nvim_buf_set_option(0, "buflisted", false)
+        vim.api.nvim_buf_set_option(0, "bufhidden", "wipe")
         return
       end
     end
@@ -201,8 +280,8 @@ local function close_everything()
 end
 
 ---@class resession.LoadOpts
----@field detach nil|boolean Detach from session after loading
----@field reset nil|boolean Close everthing before loading the session (default true)
+---@field attach nil|boolean Attach to session after loading
+---@field reset nil|boolean|"auto" Close everthing before loading the session (default "auto")
 ---@field silence_errors nil|boolean Don't error when trying to load a missing session
 ---@field dir nil|string Name of directory to load from (overrides config.dir)
 
@@ -210,7 +289,8 @@ end
 ---@param opts? resession.LoadOpts
 M.load = function(name, opts)
   opts = vim.tbl_extend("keep", opts or {}, {
-    reset = true,
+    reset = "auto",
+    attach = true,
   })
   local config = require("resession.config")
   local files = require("resession.files")
@@ -237,6 +317,9 @@ M.load = function(name, opts)
     end
     return
   end
+  if opts.reset == "auto" then
+    opts.reset = not data.tab_scoped
+  end
   if opts.reset then
     close_everything()
   else
@@ -248,7 +331,9 @@ M.load = function(name, opts)
     vim.o.columns / data.global.width,
     (vim.o.lines - vim.o.cmdheight) / data.global.height,
   }
-  vim.cmd(string.format("cd %s", data.global.cwd))
+  if not data.tab_scoped then
+    vim.cmd(string.format("cd %s", data.global.cwd))
+  end
   for _, buf in ipairs(data.buffers) do
     local bufnr = vim.fn.bufadd(buf.name)
     if buf.loaded then
@@ -294,10 +379,17 @@ M.load = function(name, opts)
   for k, v in pairs(data.global.options) do
     vim.o[k] = v
   end
-  if opts.detach then
-    current_session = nil
-  else
-    current_session = name
+  current_session = nil
+  if opts.reset then
+    tab_sessions = {}
+  end
+  remove_tabpage_session(name)
+  if opts.attach then
+    if data.tab_scoped then
+      tab_sessions[vim.api.nvim_get_current_tabpage()] = name
+    else
+      current_session = name
+    end
   end
 end
 

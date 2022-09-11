@@ -14,7 +14,6 @@ A: While it's amazing that this feature is built-in to vim, and it does an impre
 
 ## TODO
 
-- [ ] tab-scoped sessions
 - [ ] documentation
 - [ ] make filepaths relative so sessions are portable
 

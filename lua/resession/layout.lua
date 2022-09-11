@@ -4,8 +4,9 @@ local M = {}
 
 ---@param tabnr integer
 ---@param winid integer
+---@param buf_filter nil|fun(bufnr: integer): boolean
 ---@return table|false
-M.get_win_info = function(tabnr, winid)
+local function get_win_info(tabnr, winid, buf_filter)
   local bufnr = vim.api.nvim_win_get_buf(winid)
   local win = {}
   local supported_by_ext = false
@@ -26,7 +27,7 @@ M.get_win_info = function(tabnr, winid)
       break
     end
   end
-  if not supported_by_ext and not config.buffers.filter(bufnr) then
+  if not supported_by_ext and not buf_filter(bufnr) then
     return false
   end
   win = vim.tbl_extend("error", win, {
@@ -46,10 +47,11 @@ end
 
 ---@param tabnr integer
 ---@param layout table
-M.add_win_info_to_layout = function(tabnr, layout)
+---@param buf_filter nil|fun(bufnr: integer): boolean
+M.add_win_info_to_layout = function(tabnr, layout, buf_filter)
   local type = layout[1]
   if type == "leaf" then
-    layout[2] = M.get_win_info(tabnr, layout[2])
+    layout[2] = get_win_info(tabnr, layout[2], buf_filter)
     if not layout[2] then
       return false
     end
@@ -155,6 +157,9 @@ end
 ---@param scale_factor number[] Scaling factor for [width, height]
 ---@return nil|integer The window that should have focus after session load
 M.set_winlayout = function(layout, scale_factor)
+  if not layout then
+    return
+  end
   set_winlayout(layout)
   local ret = {}
   set_winlayout_data(layout, scale_factor, ret)
