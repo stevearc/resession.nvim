@@ -1,6 +1,7 @@
 local M = {}
 
 local default_config = {
+  -- Options for automatically saving sessions on a timer
   autosave = {
     enabled = false,
     -- How often to save (in seconds)

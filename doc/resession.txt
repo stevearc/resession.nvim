@@ -1,0 +1,140 @@
+*resession.txt*
+*Resession* *resession* *resession.nvim*
+--------------------------------------------------------------------------------
+CONTENTS                                                      *resession-contents*
+
+  1. Options...............................................|resession-options|
+  2. Api.......................................................|resession-api|
+
+--------------------------------------------------------------------------------
+OPTIONS                                                        *resession-options*
+
+>
+    require("resession").setup({
+      -- Options for automatically saving sessions on a timer
+      autosave = {
+        enabled = false,
+        -- How often to save (in seconds)
+        interval = 60,
+        -- Notify when autosaved
+        notify = true,
+      },
+      -- Save and restore these options
+      options = {
+        "binary",
+        "bufhidden",
+        "buflisted",
+        "cmdheight",
+        "diff",
+        "filetype",
+        "modifiable",
+        "previewwindow",
+        "readonly",
+        "scrollbind",
+        "winfixheight",
+        "winfixwidth",
+      },
+      -- Custom logic for determining if the buffer should be included
+      buf_filter = function(bufnr)
+        if not vim.tbl_contains({ "", "acwrite", "help" }, vim.bo[bufnr].buftype) then
+          return false
+        end
+        return vim.bo[bufnr].buflisted
+      end,
+      -- Custom logic for determining if a buffer should be included in a tab-scoped session
+      tab_buf_filter = function(tabpage, bufnr)
+        return true
+      end,
+      -- The name of the directory to store sessions in
+      dir = "session",
+      -- Configuration for extensions
+      extensions = {
+        quickfix = {},
+      },
+    })
+<
+
+--------------------------------------------------------------------------------
+API                                                                *resession-api*
+
+setup({config})                                                  *resession.setup*
+    Initialize resession with configuration options
+
+    Parameters:
+      {config} `table`
+
+get_current()                                              *resession.get_current*
+    Get the name of the current session
+
+
+detach()                                                        *resession.detach*
+    Detach from the current session
+
+
+list({opts})                                                      *resession.list*
+    List all available saved sessions
+
+    Parameters:
+      {opts} `nil|resession.ListOpts`
+          {dir} `nil|string` Name of directory to save to (overrides config.dir)
+
+delete({name}, {opts})                                          *resession.delete*
+    Delete a saved session
+
+    Parameters:
+      {name} `string`
+      {opts} `nil|resession.DeleteOpts`
+          {dir} `nil|string` Name of directory to save to (overrides config.dir)
+
+save({name}, {opts})                                              *resession.save*
+    Save a session to disk
+
+    Parameters:
+      {name} `nil|string`
+      {opts} `nil|resession.SaveOpts`
+          {attach} `nil|boolean` Stay attached to session after saving (default
+                   true)
+          {notify} `nil|boolean` Notify on success
+          {dir}    `nil|string` Name of directory to save to (overrides
+                   config.dir)
+
+save_tab({name}, {opts})                                      *resession.save_tab*
+    Save a tab-scoped session
+
+    Parameters:
+      {name} `string`
+      {opts} `nil|resession.SaveOpts`
+          {attach} `nil|boolean` Stay attached to session after saving (default
+                   true)
+          {notify} `nil|boolean` Notify on success
+          {dir}    `nil|string` Name of directory to save to (overrides
+                   config.dir)
+
+save_all({opts})                                              *resession.save_all*
+    Save all current sessions to disk
+
+    Parameters:
+      {opts} `nil|table`
+          {notify} `nil|boolean`
+
+load({name}, {opts})                                              *resession.load*
+    Load a session
+
+    Parameters:
+      {name} `nil|string`
+      {opts} `nil|resession.LoadOpts`
+          {attach}         `nil|boolean` Stay attached to session after loading
+                           (default true)
+          {reset}          `nil|boolean|"auto"` Close everthing before loading
+                           the session (default "auto")
+          {silence_errors} `nil|boolean` Don't error when trying to load a
+                           missing session
+          {dir}            `nil|string` Name of directory to load from
+                           (overrides config.dir)
+
+    Note:
+      The default value of `reset = "auto"` will reset when loading a normal session, but _not_ when
+      loading a tab-scoped session.
+
+================================================================================
+vim:tw=80:ts=2:ft=help:norl:syntax=help:

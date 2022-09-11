@@ -19,7 +19,7 @@ M.setup = function(config)
 end
 
 ---Get the name of the current session
----@return string|nil
+---@return nil|string
 M.get_current = function()
   local tabpage = vim.api.nvim_get_current_tabpage()
   return tab_sessions[tabpage] or current_session
@@ -32,10 +32,9 @@ M.detach = function()
   tab_sessions[tabpage] = nil
 end
 
----@class resession.ListOpts
----@field dir nil|string Name of directory to save to (overrides config.dir)
-
----@params opts nil|resession.ListOpts
+---List all available saved sessions
+---@param opts nil|resession.ListOpts
+---    dir nil|string Name of directory to save to (overrides config.dir)
 ---@return string[]
 M.list = function(opts)
   opts = opts or {}
@@ -72,11 +71,10 @@ local function remove_tabpage_session(name)
   end
 end
 
----@class resession.DeleteOpts
----@field dir nil|string Name of directory to save to (overrides config.dir)
-
+---Delete a saved session
 ---@param name string
 ---@param opts nil|resession.DeleteOpts
+---    dir nil|string Name of directory to save to (overrides config.dir)
 M.delete = function(name, opts)
   opts = opts or {}
   local files = require("resession.files")
@@ -106,7 +104,10 @@ end
 
 ---@param name string
 ---@param opts resession.SaveOpts
----@param target_tabpage? integer
+---    attach nil|boolean Stay attached to session after saving (default true)
+---    notify nil|boolean Notify on success
+---    dir nil|string Name of directory to save to (overrides config.dir)
+---@param target_tabpage nil|integer
 local function save(name, opts, target_tabpage)
   local config = require("resession.config")
   local files = require("resession.files")
@@ -180,13 +181,12 @@ local function save(name, opts, target_tabpage)
   end
 end
 
----@class resession.SaveOpts
----@field attach nil|boolean Stay attached to session after saving
----@field notify nil|boolean Notify on success
----@field dir nil|string Name of directory to save to (overrides config.dir)
-
----@param name? string
----@param opts? resession.SaveOpts
+---Save a session to disk
+---@param name nil|string
+---@param opts nil|resession.SaveOpts
+---    attach nil|boolean Stay attached to session after saving (default true)
+---    notify nil|boolean Notify on success
+---    dir nil|string Name of directory to save to (overrides config.dir)
 M.save = function(name, opts)
   opts = vim.tbl_extend("keep", opts or {}, {
     notify = true,
@@ -215,7 +215,10 @@ end
 
 ---Save a tab-scoped session
 ---@param name string
----@param opts? resession.SaveOpts
+---@param opts nil|resession.SaveOpts
+---    attach nil|boolean Stay attached to session after saving (default true)
+---    notify nil|boolean Notify on success
+---    dir nil|string Name of directory to save to (overrides config.dir)
 M.save_tab = function(name, opts)
   opts = vim.tbl_extend("keep", opts or {}, {
     notify = true,
@@ -244,6 +247,8 @@ M.save_tab = function(name, opts)
 end
 
 ---Save all current sessions to disk
+---@param opts nil|table
+---    notify nil|boolean
 M.save_all = function(opts)
   opts = vim.tbl_extend("keep", opts or {}, {
     notify = true,
@@ -287,14 +292,16 @@ local function close_everything()
   vim.cmd("silent! only")
 end
 
----@class resession.LoadOpts
----@field attach nil|boolean Attach to session after loading
----@field reset nil|boolean|"auto" Close everthing before loading the session (default "auto")
----@field silence_errors nil|boolean Don't error when trying to load a missing session
----@field dir nil|string Name of directory to load from (overrides config.dir)
-
----@param name? string
----@param opts? resession.LoadOpts
+---Load a session
+---@param name nil|string
+---@param opts nil|resession.LoadOpts
+---    attach nil|boolean Stay attached to session after loading (default true)
+---    reset nil|boolean|"auto" Close everthing before loading the session (default "auto")
+---    silence_errors nil|boolean Don't error when trying to load a missing session
+---    dir nil|string Name of directory to load from (overrides config.dir)
+---@note
+--- The default value of `reset = "auto"` will reset when loading a normal session, but _not_ when
+--- loading a tab-scoped session.
 M.load = function(name, opts)
   opts = vim.tbl_extend("keep", opts or {}, {
     reset = "auto",
