@@ -4,13 +4,10 @@ A replacement for `:mksession` with a better API
 
 🚧 Under Construction! 🚧
 
-**Q: Why another session plugin?**
-
-A: All the other plugins use `:mksession` under the hood
-
-**Q: Why don't you want to use `:mksession`?**
-
-A: While it's amazing that this feature is built-in to vim, and it does an impressively good job for most situations, it is very difficult to customize. If `:help sessionoptions` covers your use case, then you're golden. If you want anything else, you're out of luck.
+- **No magic behavior**. Only does what you tell it.
+- Supports **tab-scoped sessions**.
+- Extensive **customizability** in what gets saved/restored.
+- Easy to write **extensions** for other plugins.
 
 ## TODO
 
@@ -41,6 +38,7 @@ A: While it's amazing that this feature is built-in to vim, and it does an impre
   - [save_tab(name, opts)](#save_tabname-opts)
   - [save_all(opts)](#save_allopts)
   - [load(name, opts)](#loadname-opts)
+- [FAQ](#faq)
 
 <!-- /TOC -->
 
@@ -340,3 +338,13 @@ loading a tab-scoped session.
 
 
 <!-- /API -->
+
+## FAQ
+
+**Q: Why another session plugin?**
+
+A: All the other plugins use `:mksession` under the hood
+
+**Q: Why don't you want to use `:mksession`?**
+
+A: While it's amazing that this feature is built-in to vim, and it does an impressively good job for most situations, it is very difficult to customize. If `:help sessionoptions` covers your use case, then you're golden. If you want anything else, you're out of luck.
