@@ -10,14 +10,13 @@ A: All the other plugins use `:mksession` under the hood
 
 **Q: Why don't you want to use `:mksession`?**
 
-A: While it's amazing that this feature is built-in to vim, and it does an impressively good job for most situations, it's very difficult to customize. If `:help sessionoptions` covers your use case, then you're golden. If you want anything else, you're out of luck.
+A: While it's amazing that this feature is built-in to vim, and it does an impressively good job for most situations, it is very difficult to customize. If `:help sessionoptions` covers your use case, then you're golden. If you want anything else, you're out of luck.
 
 ## TODO
 
 - [ ] tab-scoped sessions
 - [ ] documentation
 - [ ] make filepaths relative so sessions are portable
-- [ ] extensions can add supported buffers (e.g. nvim-tree, aerial)
 
 ## Requirements
 
