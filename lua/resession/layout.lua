@@ -2,10 +2,12 @@ local config = require("resession.config")
 local util = require("resession.util")
 local M = {}
 
+---Only exposed for testing purposes
+---@private
 ---@param tabnr integer
 ---@param winid integer
 ---@return table|false
-local function get_win_info(tabnr, winid)
+M.get_win_info = function(tabnr, winid)
   local bufnr = vim.api.nvim_win_get_buf(winid)
   local win = {}
   local supported_by_ext = false
@@ -49,7 +51,7 @@ end
 M.add_win_info_to_layout = function(tabnr, layout)
   local type = layout[1]
   if type == "leaf" then
-    layout[2] = get_win_info(tabnr, layout[2])
+    layout[2] = M.get_win_info(tabnr, layout[2])
     if not layout[2] then
       return false
     end
