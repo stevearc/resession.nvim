@@ -2,21 +2,15 @@
 
 A replacement for `:mksession` with a better API
 
-🚧 Under Construction! 🚧
-
 - **No magic behavior**. Only does what you tell it.
 - Supports **tab-scoped sessions**.
 - Extensive **customizability** in what gets saved/restored.
 - Easy to write **extensions** for other plugins.
 
-## TODO
-
-- [ ] documentation
-- [ ] nvim-tree extension
+---
 
 <!-- TOC -->
 
-- [TODO](#todo)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Quick start](#quick-start)
@@ -199,7 +193,84 @@ require("resession").setup({
 
 ### Saving custom data with an extension
 
-TODO
+To create an extension, create a file in your runtimepath at `lua/resession/extensions/myplugin.lua`. Add the following contents:
+
+```lua
+local M = {}
+
+---Get the saved data for this extension
+---@return any
+M.on_save = function()
+  return {}
+end
+
+---Restore the extension state
+---@param data The value returned from on_save
+M.on_load = function(data)
+  --
+end
+
+---Called when resession gets configured
+---This function is optional
+---@param data table The configuration data passed in the config
+M.config = function(data)
+  --
+end
+
+---Check if a window is supported by this extension
+---This function is optional, but if provided save_win and load_win must
+---also be present.
+---@param winid integer
+---@param bufnr integer
+---@return boolean
+M.is_win_supported = function(winid, bufnr)
+  return true
+end
+
+---Save data for a window
+---@param winid integer
+---@return any
+M.save_win = function(winid)
+  -- This is used to save the data for a specific window that contains a non-file buffer (e.g. a filetree).
+  return {}
+end
+
+---Called with the data from save_win
+---@param winid integer
+---@param config any
+---@return integer|nil If the original window has been replaced, return the new ID that should replace it
+M.load_win = function(winid, config)
+  -- Restore the window from the config
+end
+
+return M
+```
+
+Then to activate it, users can add the extension to their call to `setup`:
+
+```lua
+require("resession").setup({
+  extensions = {
+    myplugin = {
+      -- these args will get passed in to M.config()
+    }
+  }
+})
+```
+
+For tab-scoped sessions, the `on_save` and `on_load` methods of extensions will be **disabled by default**. There is a special config argument always available that can override this:
+
+```lua
+require("resession").setup({
+  extensions = {
+    myplugin = {
+      enable_in_tab = true,
+    }
+  }
+})
+```
+
+Refer to [the quickfix extension](lua/resession/extensions/quickfix.lua) for a complete example.
 
 ## Setup options
 
