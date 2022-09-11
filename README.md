@@ -16,7 +16,6 @@ A: While it's amazing that this feature is built-in to vim, and it does an impre
 
 - [ ] documentation
 - [ ] nvim-tree extension
-- [ ] save({dir = ""}) doesn't work with autosave
 
 ## Requirements
 

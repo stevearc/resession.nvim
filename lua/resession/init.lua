@@ -3,6 +3,7 @@ local M = {}
 local pending_config
 local current_session
 local tab_sessions = {}
+local session_configs = {}
 
 local function do_setup()
   if pending_config then
@@ -174,6 +175,11 @@ local function save(name, opts, target_tabpage)
   if opts.notify then
     vim.notify(string.format("Saved session %s", name))
   end
+  if opts.attach then
+    session_configs[name] = {
+      dir = opts.dir,
+    }
+  end
 end
 
 ---@class resession.SaveOpts
@@ -245,10 +251,10 @@ M.save_all = function(opts)
     notify = true,
   })
   if current_session then
-    save(current_session, opts)
+    save(current_session, vim.tbl_extend("keep", opts, session_configs[current_session]))
   else
     for tabpage, name in pairs(tab_sessions) do
-      save(name, opts, tabpage)
+      save(name, vim.tbl_extend("keep", opts, session_configs[name]), tabpage)
     end
   end
 end
@@ -394,6 +400,9 @@ M.load = function(name, opts)
     else
       current_session = name
     end
+    session_configs[name] = {
+      dir = opts.dir,
+    }
   end
 end
 
