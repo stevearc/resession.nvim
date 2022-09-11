@@ -4,9 +4,8 @@ local M = {}
 
 ---@param tabnr integer
 ---@param winid integer
----@param buf_filter nil|fun(bufnr: integer): boolean
 ---@return table|false
-local function get_win_info(tabnr, winid, buf_filter)
+local function get_win_info(tabnr, winid)
   local bufnr = vim.api.nvim_win_get_buf(winid)
   local win = {}
   local supported_by_ext = false
@@ -27,7 +26,7 @@ local function get_win_info(tabnr, winid, buf_filter)
       break
     end
   end
-  if not supported_by_ext and not buf_filter(bufnr) then
+  if not supported_by_ext and not config.buf_filter(bufnr) then
     return false
   end
   win = vim.tbl_extend("error", win, {
@@ -47,11 +46,10 @@ end
 
 ---@param tabnr integer
 ---@param layout table
----@param buf_filter nil|fun(bufnr: integer): boolean
-M.add_win_info_to_layout = function(tabnr, layout, buf_filter)
+M.add_win_info_to_layout = function(tabnr, layout)
   local type = layout[1]
   if type == "leaf" then
-    layout[2] = get_win_info(tabnr, layout[2], buf_filter)
+    layout[2] = get_win_info(tabnr, layout[2])
     if not layout[2] then
       return false
     end
@@ -117,6 +115,7 @@ local function set_winlayout_data(layout, scale_factor, visit_data)
   local type = layout[1]
   if type == "leaf" then
     local win = layout[2]
+    vim.api.nvim_set_current_win(win.winid)
     if win.extension then
       local ext = util.get_extension(win.extension)
       if ext then

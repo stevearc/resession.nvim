@@ -6,6 +6,8 @@ M.on_save = function()
   return {}
 end
 
+---Restore the extension state
+---@param data The value returned from on_save
 M.on_load = function(data)
   --
 end
@@ -18,7 +20,8 @@ M.config = function(data)
 end
 
 ---Check if a window is supported by this extension
----This function is optional for extensions
+---This function is optional, but if provided save_win and load_win must
+---also be present.
 ---@param winid integer
 ---@param bufnr integer
 ---@return boolean

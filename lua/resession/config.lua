@@ -15,6 +15,7 @@ local default_config = {
     "buflisted",
     "cmdheight",
     "diff",
+    "filetype",
     "modifiable",
     "previewwindow",
     "readonly",

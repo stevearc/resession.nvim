@@ -126,8 +126,15 @@ local function save(name, opts, target_tabpage)
       options = target_tabpage and {} or util.save_global_options(),
     },
   }
+  local tabpage_bufs = {}
+  if target_tabpage then
+    for _, winid in ipairs(vim.api.nvim_tabpage_list_wins()) do
+      local bufnr = vim.api.nvim_win_get_buf(winid)
+      tabpage_bufs[bufnr] = true
+    end
+  end
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-    if util.include_buf(target_tabpage, bufnr) then
+    if util.include_buf(target_tabpage, bufnr, tabpage_bufs) then
       local buf = {
         name = vim.api.nvim_buf_get_name(bufnr),
         loaded = vim.api.nvim_buf_is_loaded(bufnr),
@@ -137,9 +144,6 @@ local function save(name, opts, target_tabpage)
     end
   end
   local tabpages = target_tabpage and { target_tabpage } or vim.api.nvim_list_tabpages()
-  local buf_filter = function(bufnr)
-    return util.include_buf(target_tabpage, bufnr)
-  end
   for _, tabpage in ipairs(tabpages) do
     local tab = {}
     local tabnr = vim.api.nvim_tabpage_get_number(tabpage)
@@ -148,12 +152,12 @@ local function save(name, opts, target_tabpage)
     end
     table.insert(data.tabs, tab)
     local winlayout = vim.fn.winlayout(tabnr)
-    tab.wins = layout.add_win_info_to_layout(tabnr, winlayout, buf_filter)
+    tab.wins = layout.add_win_info_to_layout(tabnr, winlayout)
   end
 
   for ext_name, ext_config in pairs(config.extensions) do
     local ext = util.get_extension(ext_name)
-    if ext and (ext_config.enable_in_tab or not target_tabpage) then
+    if ext and ext.on_save and (ext_config.enable_in_tab or not target_tabpage) then
       local ok, ext_data = pcall(ext.on_save)
       if ok then
         data[ext_name] = ext_data

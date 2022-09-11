@@ -98,11 +98,14 @@ M.get_session_file = function(name, dirname)
   return files.join(M.get_session_dir(dirname), filename)
 end
 
-M.include_buf = function(tabpage, bufnr)
+M.include_buf = function(tabpage, bufnr, tabpage_bufs)
   if not config.buf_filter(bufnr) then
     return false
   end
-  return not tabpage or config.tab_buf_filter(tabpage, bufnr)
+  if not tabpage then
+    return true
+  end
+  return tabpage_bufs[bufnr] or config.tab_buf_filter(tabpage, bufnr)
 end
 
 return M
