@@ -153,12 +153,12 @@ M.save = function(name, opts)
     if ext then
       local ok, ext_data = pcall(ext.on_save)
       if ok then
+        data[ext_name] = ext_data
+      else
         vim.notify(
           string.format("[resession] Extension %s save error: %s", ext_name, ext_data),
           vim.log.levels.ERROR
         )
-      else
-        data[ext_name] = ext_data
       end
     end
   end
@@ -279,7 +279,7 @@ M.load = function(name, opts)
     if data[ext_name] then
       local ext = util.get_extension(ext_name)
       if ext then
-        local ok, err = pcall(ext.on_load, data)
+        local ok, err = pcall(ext.on_load, data[ext_name])
         if not ok then
           vim.notify(
             string.format("[resession] Extension %s load error: %s", ext_name, err),
