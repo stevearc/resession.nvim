@@ -32,6 +32,7 @@ A replacement for `:mksession` with a better API
   - [save_tab(name, opts)](#save_tabname-opts)
   - [save_all(opts)](#save_allopts)
   - [load(name, opts)](#loadname-opts)
+- [Extensions](#extensions)
 - [FAQ](#faq)
 
 <!-- /TOC -->
@@ -330,9 +331,9 @@ require("resession").setup({
 ### setup(config)
 
 Initialize resession with configuration options
-| Param | Type | Desc |
+| Param  | Type    | Desc |
 | ------ | ------- | - |
-| config | `table` | |
+| config | `table` |   |
 
 ### get_current()
 
@@ -345,68 +346,68 @@ Detach from the current session
 ### list(opts)
 
 List all available saved sessions
-| Param | Type | Desc | |
+| Param | Type                      | Desc          |                                                     |
 | ---- | ------------------------- | ------------- | --------------------------------------------------- |
-| opts | `nil\|resession.ListOpts` | | |
-| | dir | `nil\|string` | Name of directory to save to (overrides config.dir) |
+| opts | `nil\|resession.ListOpts` |               |                                                     |
+|      | dir                       | `nil\|string` | Name of directory to save to (overrides config.dir) |
 
 ### delete(name, opts)
 
 Delete a saved session
-| Param | Type | Desc | |
+| Param | Type                        | Desc          |                                                     |
 | ---- | --------------------------- | ------------- | --------------------------------------------------- |
-| name | `string` | | |
-| opts | `nil\|resession.DeleteOpts` | | |
-| | dir | `nil\|string` | Name of directory to save to (overrides config.dir) |
+| name | `string`                    |               |                                                     |
+| opts | `nil\|resession.DeleteOpts` |               |                                                     |
+|      | dir                         | `nil\|string` | Name of directory to save to (overrides config.dir) |
 
 ### save(name, opts)
 
 Save a session to disk
-| Param | Type | Desc | |
+| Param | Type                      | Desc           |                                                      |
 | ---- | ------------------------- | -------------- | ---------------------------------------------------- |
-| name | `nil\|string` | | |
-| opts | `nil\|resession.SaveOpts` | | |
-| | attach | `nil\|boolean` | Stay attached to session after saving (default true) |
-| | notify | `nil\|boolean` | Notify on success |
-| | dir | `nil\|string` | Name of directory to save to (overrides config.dir) |
+| name | `nil\|string`             |                |                                                      |
+| opts | `nil\|resession.SaveOpts` |                |                                                      |
+|      | attach                    | `nil\|boolean` | Stay attached to session after saving (default true) |
+|      | notify                    | `nil\|boolean` | Notify on success                                    |
+|      | dir                       | `nil\|string`  | Name of directory to save to (overrides config.dir)  |
 
 ### save_tab(name, opts)
 
 Save a tab-scoped session
-| Param | Type | Desc | |
+| Param | Type                      | Desc           |                                                      |
 | ---- | ------------------------- | -------------- | ---------------------------------------------------- |
-| name | `string` | | |
-| opts | `nil\|resession.SaveOpts` | | |
-| | attach | `nil\|boolean` | Stay attached to session after saving (default true) |
-| | notify | `nil\|boolean` | Notify on success |
-| | dir | `nil\|string` | Name of directory to save to (overrides config.dir) |
+| name | `string`                  |                |                                                      |
+| opts | `nil\|resession.SaveOpts` |                |                                                      |
+|      | attach                    | `nil\|boolean` | Stay attached to session after saving (default true) |
+|      | notify                    | `nil\|boolean` | Notify on success                                    |
+|      | dir                       | `nil\|string`  | Name of directory to save to (overrides config.dir)  |
 
 ### save_all(opts)
 
 Save all current sessions to disk
-| Param | Type | Desc | |
+| Param | Type         | Desc           |   |
 | ---- | ------------ | -------------- | - |
-| opts | `nil\|table` | | |
-| | notify | `nil\|boolean` | |
+| opts | `nil\|table` |                |   |
+|      | notify       | `nil\|boolean` |   |
 
 ### load(name, opts)
 
 Load a session
-| Param | Type | Desc | |
+| Param | Type                      | Desc                   |                                                             |
 | ---- | ------------------------- | ---------------------- | ----------------------------------------------------------- |
-| name | `nil\|string` | | |
-| opts | `nil\|resession.LoadOpts` | | |
-| | attach | `nil\|boolean` | Stay attached to session after loading (default true) |
-| | reset | `nil\|boolean\|"auto"` | Close everthing before loading the session (default "auto") |
-| | silence_errors | `nil\|boolean` | Don't error when trying to load a missing session |
-| | dir | `nil\|string` | Name of directory to load from (overrides config.dir) |
+| name | `nil\|string`             |                        |                                                             |
+| opts | `nil\|resession.LoadOpts` |                        |                                                             |
+|      | attach                    | `nil\|boolean`         | Stay attached to session after loading (default true)       |
+|      | reset                     | `nil\|boolean\|"auto"` | Close everthing before loading the session (default "auto") |
+|      | silence_errors            | `nil\|boolean`         | Don't error when trying to load a missing session           |
+|      | dir                       | `nil\|string`          | Name of directory to load from (overrides config.dir)       |
 
 **Note:**
-
 <pre>
 The default value of `reset = "auto"` will reset when loading a normal session, but _not_ when
 loading a tab-scoped session.
 </pre>
+
 
 <!-- /API -->
 
