@@ -134,8 +134,7 @@ local function set_winlayout_data(layout, scale_factor, visit_data)
     else
       local bufnr = vim.fn.bufadd(win.bufname)
       vim.api.nvim_win_set_buf(win.winid, bufnr)
-      -- After setting the buffer into the window, manually set the filetype to trigger syntax
-      -- highlighting
+      -- After setting the buffer into the window, manually set the filetype to trigger syntax highlighting
       vim.api.nvim_buf_set_option(bufnr, "filetype", vim.api.nvim_buf_get_option(bufnr, "filetype"))
     end
     pcall(vim.api.nvim_win_set_cursor, win.winid, win.cursor)

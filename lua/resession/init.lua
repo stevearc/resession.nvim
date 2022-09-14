@@ -353,6 +353,19 @@ M.load = function(name, opts)
     local bufnr = vim.fn.bufadd(buf.name)
     if buf.loaded then
       vim.fn.bufload(bufnr)
+      vim.api.nvim_create_autocmd("BufWinEnter", {
+        desc = "After showing the buffer in the window, manually set the filetype to trigger syntax highlighting",
+        callback = function()
+          vim.api.nvim_buf_set_option(
+            bufnr,
+            "filetype",
+            vim.api.nvim_buf_get_option(bufnr, "filetype")
+          )
+        end,
+        buffer = bufnr,
+        once = true,
+        nested = true,
+      })
     end
     util.restore_buf_options(bufnr, buf.options)
   end
