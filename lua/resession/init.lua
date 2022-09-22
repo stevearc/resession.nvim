@@ -128,7 +128,7 @@ local function save(name, opts, target_tabpage)
   }
   local tabpage_bufs = {}
   if target_tabpage then
-    for _, winid in ipairs(vim.api.nvim_tabpage_list_wins()) do
+    for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(target_tabpage)) do
       local bufnr = vim.api.nvim_win_get_buf(winid)
       tabpage_bufs[bufnr] = true
     end
