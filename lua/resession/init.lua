@@ -256,6 +256,14 @@ M.save_all = function(opts)
   if current_session then
     save(current_session, vim.tbl_extend("keep", opts, session_configs[current_session]))
   else
+    -- First prune tab-scoped sessions for closed tabs
+    local invalid_tabpages = vim.tbl_filter(function(tabpage)
+      return not vim.api.nvim_tabpage_is_valid(tabpage)
+    end, vim.tbl_keys(tab_sessions))
+    for _, tabpage in ipairs(invalid_tabpages) do
+      tab_sessions[tabpage] = nil
+    end
+    -- Save all tab-scoped sessions
     for tabpage, name in pairs(tab_sessions) do
       save(name, vim.tbl_extend("keep", opts, session_configs[name]), tabpage)
     end
