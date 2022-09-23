@@ -26,7 +26,11 @@ local default_config = {
   },
   -- Custom logic for determining if the buffer should be included
   buf_filter = function(bufnr)
-    if not vim.tbl_contains({ "", "acwrite", "help" }, vim.bo[bufnr].buftype) then
+    local buftype = vim.bo[bufnr].buftype
+    if buftype == "help" then
+      return true
+    end
+    if buftype ~= "" and buftype ~= "acwrite" then
       return false
     end
     return vim.bo[bufnr].buflisted
