@@ -32,6 +32,9 @@ local default_config = {
   end,
   -- The name of the directory to store sessions in
   dir = "session",
+  -- Show more detail about the sessions when selecting one to load.
+  -- Disable if it causes lag.
+  load_detail = true,
   -- Configuration for extensions
   extensions = {
     quickfix = {},

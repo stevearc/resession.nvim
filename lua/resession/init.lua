@@ -85,7 +85,7 @@ M.delete = function(name, opts)
       vim.notify("No saved sessions", vim.log.levels.WARN)
       return
     end
-    vim.ui.select(sessions, {}, function(selected)
+    vim.ui.select(sessions, { prompt = "Delete session" }, function(selected)
       if selected then
         M.delete(selected)
       end
@@ -325,7 +325,29 @@ M.load = function(name, opts)
       vim.notify("No saved sessions", vim.log.levels.WARN)
       return
     end
-    vim.ui.select(sessions, {}, function(selected)
+    local select_opts = { prompt = "Load session" }
+    if config.load_detail then
+      local session_data = {}
+      for _, name in ipairs(sessions) do
+        local filename = util.get_session_file(name, opts.dir)
+        local data = files.load_json_file(filename)
+        session_data[name] = data
+      end
+      select_opts.format_item = function(name)
+        local data = session_data[name]
+        local formatted = name
+        if data then
+          if data.tab_scoped then
+            local tab_cwd = data.tabs[1].cwd
+            formatted = formatted .. string.format(" (tab) [%s]", util.shorten_path(tab_cwd))
+          else
+            formatted = formatted .. string.format(" [%s]", util.shorten_path(data.global.cwd))
+          end
+        end
+        return formatted
+      end
+    end
+    vim.ui.select(sessions, select_opts, function(selected)
       if selected then
         M.load(selected, opts)
       end
@@ -348,15 +370,15 @@ M.load = function(name, opts)
   else
     open_clean_tab()
   end
-  -- Set the options immediately
-  util.restore_global_options(data.global.options)
+  if not data.tab_scoped then
+    -- Set the options immediately
+    util.restore_global_options(data.global.options)
+    vim.cmd(string.format("cd %s", data.global.cwd))
+  end
   local scale = {
     vim.o.columns / data.global.width,
     (vim.o.lines - vim.o.cmdheight) / data.global.height,
   }
-  if not data.tab_scoped then
-    vim.cmd(string.format("cd %s", data.global.cwd))
-  end
   for _, buf in ipairs(data.buffers) do
     local bufnr = vim.fn.bufadd(buf.name)
     if buf.loaded then

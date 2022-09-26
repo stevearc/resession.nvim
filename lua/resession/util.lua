@@ -108,4 +108,14 @@ M.include_buf = function(tabpage, bufnr, tabpage_bufs)
   return tabpage_bufs[bufnr] or config.tab_buf_filter(tabpage, bufnr)
 end
 
+M.shorten_path = function(path)
+  local home = os.getenv("HOME")
+  local idx, chars = string.find(path, home)
+  if idx == 1 then
+    return "~" .. string.sub(path, idx + chars)
+  else
+    return path
+  end
+end
+
 return M
