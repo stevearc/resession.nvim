@@ -432,6 +432,21 @@ M.load = function(name, opts)
   end
 end
 
+---The default config.buf_filter
+---Takes all buflisted files with "", "acwrite", or "help" buftype
+---@param bufnr integer
+---@return boolean
+M.default_buf_filter = function(bufnr)
+  local buftype = vim.bo[bufnr].buftype
+  if buftype == "help" then
+    return true
+  end
+  if buftype ~= "" and buftype ~= "acwrite" then
+    return false
+  end
+  return vim.bo[bufnr].buflisted
+end
+
 -- Make sure all the API functions trigger the lazy load
 for k, v in pairs(M) do
   if type(v) == "function" and k ~= "setup" then

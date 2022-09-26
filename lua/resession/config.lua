@@ -25,16 +25,7 @@ local default_config = {
     "winfixwidth",
   },
   -- Custom logic for determining if the buffer should be included
-  buf_filter = function(bufnr)
-    local buftype = vim.bo[bufnr].buftype
-    if buftype == "help" then
-      return true
-    end
-    if buftype ~= "" and buftype ~= "acwrite" then
-      return false
-    end
-    return vim.bo[bufnr].buflisted
-  end,
+  buf_filter = require("resession").default_buf_filter,
   -- Custom logic for determining if a buffer should be included in a tab-scoped session
   tab_buf_filter = function(tabpage, bufnr)
     return true
