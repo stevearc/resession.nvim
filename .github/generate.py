@@ -1,23 +1,15 @@
-import json
 import os
 import re
-import subprocess
-from typing import Any, Dict, Iterable, List, Tuple
+from typing import List
 
 from nvim_doc_tools.apidoc import parse_functions, render_api_md, render_api_vimdoc
 from nvim_doc_tools.util import (
-    MD_LINK_PAT,
     Vimdoc,
     VimdocSection,
-    dedent,
-    format_md_table,
     generate_md_toc,
     indent,
-    leftright,
-    md_create_anchor,
     read_section,
     replace_section,
-    wrap,
 )
 
 HERE = os.path.dirname(__file__)

@@ -61,7 +61,7 @@ setup({config})                                                  *resession.setu
     Parameters:
       {config} `table`
 
-get_current()                                              *resession.get_current*
+get_current(): nil|string                                  *resession.get_current*
     Get the name of the current session
 
 
@@ -69,7 +69,7 @@ detach()                                                        *resession.detac
     Detach from the current session
 
 
-list({opts})                                                      *resession.list*
+list({opts}): string[]                                            *resession.list*
     List all available saved sessions
 
     Parameters:
@@ -134,7 +134,7 @@ load({name}, {opts})                                              *resession.loa
       The default value of `reset = "auto"` will reset when loading a normal session, but _not_ when
       loading a tab-scoped session.
 
-default_buf_filter({bufnr})                         *resession.default_buf_filter*
+default_buf_filter({bufnr}): boolean                *resession.default_buf_filter*
     The default config.buf_filter (takes all buflisted files with "", "acwrite",
     or "help" buftype)
 
