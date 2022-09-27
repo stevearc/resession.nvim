@@ -24,15 +24,15 @@ A replacement for `:mksession` with a better API
 - [Setup options](#setup-options)
 - [API](#api)
   - [setup(config)](#setupconfig)
-  - [get_current(): nil|string](#get_current:-nil|string)
+  - [get_current()](#get_current)
   - [detach()](#detach)
-  - [list(opts): string[]](#listopts:-string[])
+  - [list(opts)](#listopts)
   - [delete(name, opts)](#deletename-opts)
   - [save(name, opts)](#savename-opts)
   - [save_tab(name, opts)](#save_tabname-opts)
   - [save_all(opts)](#save_allopts)
   - [load(name, opts)](#loadname-opts)
-  - [default_buf_filter(bufnr): boolean](#default_buf_filterbufnr:-boolean)
+  - [default_buf_filter(bufnr)](#default_buf_filterbufnr)
 - [Extensions](#extensions)
 - [FAQ](#faq)
 
@@ -329,21 +329,25 @@ require("resession").setup({
 
 ### setup(config)
 
+`setup(config)` \
 Initialize resession with configuration options
 | Param  | Type    | Desc |
 | ------ | ------- | - |
 | config | `table` |   |
 
-### get_current(): nil|string
+### get_current()
 
+`get_current(): nil|string` \
 Get the name of the current session
 
 ### detach()
 
+`detach()` \
 Detach from the current session
 
-### list(opts): string[]
+### list(opts)
 
+`list(opts): string[]` \
 List all available saved sessions
 | Param | Type                      | Desc          |                                                     |
 | ---- | ------------------------- | ------------- | --------------------------------------------------- |
@@ -352,6 +356,7 @@ List all available saved sessions
 
 ### delete(name, opts)
 
+`delete(name, opts)` \
 Delete a saved session
 | Param | Type                        | Desc          |                                                     |
 | ---- | --------------------------- | ------------- | --------------------------------------------------- |
@@ -361,6 +366,7 @@ Delete a saved session
 
 ### save(name, opts)
 
+`save(name, opts)` \
 Save a session to disk
 | Param | Type                      | Desc           |                                                      |
 | ---- | ------------------------- | -------------- | ---------------------------------------------------- |
@@ -372,6 +378,7 @@ Save a session to disk
 
 ### save_tab(name, opts)
 
+`save_tab(name, opts)` \
 Save a tab-scoped session
 | Param | Type                      | Desc           |                                                      |
 | ---- | ------------------------- | -------------- | ---------------------------------------------------- |
@@ -383,6 +390,7 @@ Save a tab-scoped session
 
 ### save_all(opts)
 
+`save_all(opts)` \
 Save all current sessions to disk
 | Param | Type         | Desc           |   |
 | ---- | ------------ | -------------- | - |
@@ -391,6 +399,7 @@ Save all current sessions to disk
 
 ### load(name, opts)
 
+`load(name, opts)` \
 Load a session
 | Param | Type                      | Desc                   |                                                             |
 | ---- | ------------------------- | ---------------------- | ----------------------------------------------------------- |
@@ -407,8 +416,9 @@ The default value of `reset = "auto"` will reset when loading a normal session, 
 loading a tab-scoped session.
 </pre>
 
-### default_buf_filter(bufnr): boolean
+### default_buf_filter(bufnr)
 
+`default_buf_filter(bufnr): boolean` \
 The default config.buf_filter (takes all buflisted files with "", "acwrite", or "help" buftype)
 | Param | Type      | Desc |
 | ----- | --------- | - |
