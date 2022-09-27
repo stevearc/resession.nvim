@@ -32,6 +32,7 @@ A replacement for `:mksession` with a better API
   - [save_tab(name, opts)](#save_tabname-opts)
   - [save_all(opts)](#save_allopts)
   - [load(name, opts)](#loadname-opts)
+  - [default_buf_filter(bufnr)](#default_buf_filterbufnr)
 - [Extensions](#extensions)
 - [FAQ](#faq)
 
@@ -303,22 +304,16 @@ require("resession").setup({
     "winfixwidth",
   },
   -- Custom logic for determining if the buffer should be included
-  buf_filter = function(bufnr)
-    local buftype = vim.bo[bufnr].buftype
-    if buftype == "help" then
-      return true
-    end
-    if buftype ~= "" and buftype ~= "acwrite" then
-      return false
-    end
-    return vim.bo[bufnr].buflisted
-  end,
+  buf_filter = require("resession").default_buf_filter,
   -- Custom logic for determining if a buffer should be included in a tab-scoped session
   tab_buf_filter = function(tabpage, bufnr)
     return true
   end,
   -- The name of the directory to store sessions in
   dir = "session",
+  -- Show more detail about the sessions when selecting one to load.
+  -- Disable if it causes lag.
+  load_detail = true,
   -- Configuration for extensions
   extensions = {
     quickfix = {},
@@ -411,6 +406,13 @@ Load a session
 The default value of `reset = "auto"` will reset when loading a normal session, but _not_ when
 loading a tab-scoped session.
 </pre>
+
+### default_buf_filter(bufnr)
+
+The default config.buf_filter (takes all buflisted files with "", "acwrite", or "help" buftype)
+| Param | Type      | Desc |
+| ----- | --------- | - |
+| bufnr | `integer` |   |
 
 
 <!-- /API -->

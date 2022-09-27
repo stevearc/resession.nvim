@@ -3,6 +3,7 @@ resession	resession.txt	/*resession*
 resession-api	resession.txt	/*resession-api*
 resession-contents	resession.txt	/*resession-contents*
 resession-options	resession.txt	/*resession-options*
+resession.default_buf_filter	resession.txt	/*resession.default_buf_filter*
 resession.delete	resession.txt	/*resession.delete*
 resession.detach	resession.txt	/*resession.detach*
 resession.get_current	resession.txt	/*resession.get_current*
