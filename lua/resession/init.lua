@@ -328,14 +328,14 @@ M.load = function(name, opts)
     local select_opts = { prompt = "Load session" }
     if config.load_detail then
       local session_data = {}
-      for _, name in ipairs(sessions) do
-        local filename = util.get_session_file(name, opts.dir)
+      for _, session_name in ipairs(sessions) do
+        local filename = util.get_session_file(session_name, opts.dir)
         local data = files.load_json_file(filename)
-        session_data[name] = data
+        session_data[session_name] = data
       end
-      select_opts.format_item = function(name)
-        local data = session_data[name]
-        local formatted = name
+      select_opts.format_item = function(session_name)
+        local data = session_data[session_name]
+        local formatted = session_name
         if data then
           if data.tab_scoped then
             local tab_cwd = data.tabs[1].cwd
