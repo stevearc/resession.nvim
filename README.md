@@ -24,15 +24,15 @@ A replacement for `:mksession` with a better API
 - [Setup options](#setup-options)
 - [API](#api)
   - [setup(config)](#setupconfig)
-  - [get_current()](#get_current)
+  - [get_current(): nil|string](#get_current:-nil|string)
   - [detach()](#detach)
-  - [list(opts)](#listopts)
+  - [list(opts): string[]](#listopts:-string[])
   - [delete(name, opts)](#deletename-opts)
   - [save(name, opts)](#savename-opts)
   - [save_tab(name, opts)](#save_tabname-opts)
   - [save_all(opts)](#save_allopts)
   - [load(name, opts)](#loadname-opts)
-  - [default_buf_filter(bufnr)](#default_buf_filterbufnr)
+  - [default_buf_filter(bufnr): boolean](#default_buf_filterbufnr:-boolean)
 - [Extensions](#extensions)
 - [FAQ](#faq)
 
@@ -334,7 +334,7 @@ Initialize resession with configuration options
 | ------ | ------- | - |
 | config | `table` |   |
 
-### get_current()
+### get_current(): nil|string
 
 Get the name of the current session
 
@@ -342,7 +342,7 @@ Get the name of the current session
 
 Detach from the current session
 
-### list(opts)
+### list(opts): string[]
 
 List all available saved sessions
 | Param | Type                      | Desc          |                                                     |
@@ -407,7 +407,7 @@ The default value of `reset = "auto"` will reset when loading a normal session, 
 loading a tab-scoped session.
 </pre>
 
-### default_buf_filter(bufnr)
+### default_buf_filter(bufnr): boolean
 
 The default config.buf_filter (takes all buflisted files with "", "acwrite", or "help" buftype)
 | Param | Type      | Desc |
