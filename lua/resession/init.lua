@@ -454,8 +454,7 @@ M.load = function(name, opts)
   end
 end
 
----The default config.buf_filter
----Takes all buflisted files with "", "acwrite", or "help" buftype
+---The default config.buf_filter (takes all buflisted files with "", "acwrite", or "help" buftype)
 ---@param bufnr integer
 ---@return boolean
 M.default_buf_filter = function(bufnr)
