@@ -24,6 +24,7 @@ A replacement for `:mksession` with a better API
 - [Setup options](#setup-options)
 - [API](#api)
   - [setup(config)](#setupconfig)
+  - [load_extension(name, opts)](#load_extensionname-opts)
   - [get_current()](#get_current)
   - [detach()](#detach)
   - [list(opts)](#listopts)
@@ -334,6 +335,15 @@ Initialize resession with configuration options
 | Param  | Type    | Desc |
 | ------ | ------- | - |
 | config | `table` |   |
+
+### load_extension(name, opts)
+
+`load_extension(name, opts)` \
+Load an extension some time after calling setup()
+| Param | Type     | Desc                                |
+| ---- | -------- | ----------------------------------- |
+| name | `string` | Name of the extension               |
+| opts | `table`  | Configuration options for extension |
 
 ### get_current()
 

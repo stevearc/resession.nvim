@@ -61,6 +61,13 @@ setup({config})                                                  *resession.setu
     Parameters:
       {config} `table`
 
+load_extension({name}, {opts})                          *resession.load_extension*
+    Load an extension some time after calling setup()
+
+    Parameters:
+      {name} `string` Name of the extension
+      {opts} `table` Configuration options for extension
+
 get_current(): nil|string                                  *resession.get_current*
     Get the name of the current session
 

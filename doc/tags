@@ -9,6 +9,7 @@ resession.detach	resession.txt	/*resession.detach*
 resession.get_current	resession.txt	/*resession.get_current*
 resession.list	resession.txt	/*resession.list*
 resession.load	resession.txt	/*resession.load*
+resession.load_extension	resession.txt	/*resession.load_extension*
 resession.nvim	resession.txt	/*resession.nvim*
 resession.save	resession.txt	/*resession.save*
 resession.save_all	resession.txt	/*resession.save_all*
