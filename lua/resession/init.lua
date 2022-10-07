@@ -1,5 +1,6 @@
 local M = {}
 
+local has_setup = false
 local pending_config
 local current_session
 local tab_sessions = {}
@@ -9,6 +10,7 @@ local function do_setup()
   if pending_config then
     require("resession.config").setup(pending_config)
     pending_config = nil
+    has_setup = true
   end
 end
 
@@ -16,6 +18,29 @@ end
 ---@param config table
 M.setup = function(config)
   pending_config = config or {}
+  if has_setup then
+    do_setup()
+  end
+end
+
+---Load an extension some time after calling setup()
+---@param name string Name of the extension
+---@param opts table Configuration options for extension
+M.load_extension = function(name, opts)
+  if has_setup then
+    local config = require("resession.config")
+    local util = require("resession.util")
+    config.extensions[name] = opts
+    local ext = util.get_extension(name)
+    if ext and ext.config then
+      ext.config(opts)
+    end
+  elseif pending_config then
+    pending_config.extensions = pending_config.extensions or {}
+    pending_config.extensions[name] = config
+  else
+    error("Cannot call resession.load_extension() before resession.setup()")
+  end
 end
 
 ---Get the name of the current session
