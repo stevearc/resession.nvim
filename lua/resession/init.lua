@@ -37,7 +37,7 @@ M.load_extension = function(name, opts)
     end
   elseif pending_config then
     pending_config.extensions = pending_config.extensions or {}
-    pending_config.extensions[name] = config
+    pending_config.extensions[name] = opts
   else
     error("Cannot call resession.load_extension() before resession.setup()")
   end
