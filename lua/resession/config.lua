@@ -52,9 +52,11 @@ M.setup = function(config)
   end
 
   for ext_name, ext_config in pairs(M.extensions) do
-    local ext = util.get_extension(ext_name)
-    if ext and ext.config then
-      ext.config(ext_config)
+    if ext_config then
+      local ext = util.get_extension(ext_name)
+      if ext and ext.config then
+        ext.config(ext_config)
+      end
     end
   end
 
