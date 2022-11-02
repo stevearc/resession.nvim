@@ -1,4 +1,3 @@
-local util = require("overseer.util")
 local M = {}
 
 ---@type boolean
@@ -72,7 +71,7 @@ end
 M.load_json_file = function(filepath)
   local content = M.read_file(filepath)
   if content then
-    return util.decode_json(content)
+    return vim.json.decode(content, { luanil = { object = true } })
   end
 end
 
