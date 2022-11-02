@@ -164,6 +164,7 @@ local function save(name, opts, target_tabpage)
         name = vim.api.nvim_buf_get_name(bufnr),
         loaded = vim.api.nvim_buf_is_loaded(bufnr),
         options = util.save_buf_options(bufnr),
+        last_pos = vim.api.nvim_buf_get_mark(bufnr, '"'),
       }
       table.insert(data.buffers, buf)
     end
@@ -409,13 +410,11 @@ M.load = function(name, opts)
     if buf.loaded then
       vim.fn.bufload(bufnr)
       vim.api.nvim_create_autocmd("BufWinEnter", {
-        desc = "After showing the buffer in the window, manually set the filetype to trigger syntax highlighting",
-        callback = function()
-          vim.api.nvim_buf_set_option(
-            bufnr,
-            "filetype",
-            vim.api.nvim_buf_get_option(bufnr, "filetype")
-          )
+        desc = "Resession: complete setup of restored buffer",
+        callback = function(args)
+          pcall(vim.api.nvim_win_set_cursor, 0, buf.last_pos)
+          -- After showing the buffer in a window, manually set the filetype to trigger syntax highlighting
+          vim.api.nvim_buf_set_option(bufnr, "filetype", vim.bo[bufnr].filetype)
         end,
         buffer = bufnr,
         once = true,
