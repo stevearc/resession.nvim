@@ -5,12 +5,28 @@ local pending_config
 local current_session
 local tab_sessions = {}
 local session_configs = {}
+local hooks = setmetatable({
+  pre_load = {},
+  post_load = {},
+  pre_save = {},
+  post_save = {},
+}, {
+  __index = function(t, key)
+    error(string.format("Unrecognized hook '%s'", key))
+  end,
+})
 
 local function do_setup()
   if pending_config then
     require("resession.config").setup(pending_config)
     pending_config = nil
     has_setup = true
+  end
+end
+
+local function dispatch(name, ...)
+  for _, cb in ipairs(hooks[name]) do
+    cb(...)
   end
 end
 
@@ -139,6 +155,7 @@ local function save(name, opts, target_tabpage)
   local layout = require("resession.layout")
   local util = require("resession.util")
   local filename = util.get_session_file(name, opts.dir)
+  dispatch("pre_save", name, opts, target_tabpage)
   local data = {
     buffers = {},
     tabs = {},
@@ -205,6 +222,7 @@ local function save(name, opts, target_tabpage)
       dir = opts.dir,
     }
   end
+  dispatch("post_save", name, opts, target_tabpage)
 end
 
 ---Save a session to disk
@@ -326,6 +344,7 @@ local function close_everything()
   vim.cmd("silent! only")
 end
 
+local _is_loading = false
 ---Load a session
 ---@param name nil|string
 ---@param opts nil|resession.LoadOpts
@@ -388,6 +407,8 @@ M.load = function(name, opts)
     end
     return
   end
+  dispatch("pre_load", name, opts)
+  _is_loading = true
   if opts.reset == "auto" then
     opts.reset = not data.tab_scoped
   end
@@ -476,6 +497,28 @@ M.load = function(name, opts)
       dir = opts.dir,
     }
   end
+  _is_loading = false
+  dispatch("post_load", name, opts)
+end
+
+---Add a callback that runs at a specific time
+---@param name "pre_save"|"post_save"|"pre_load"|"post_load"
+---@param callback fun()
+M.add_hook = function(name, callback)
+  table.insert(hooks[name], callback)
+end
+
+---Remove a hook callback
+---@param name "pre_save"|"post_save"|"pre_load"|"post_load"
+---@param callback fun()
+M.remove_hook = function(name, callback)
+  local cbs = hooks[name]
+  for i, cb in ipairs(cbs) do
+    if cb == callback then
+      table.remove(cbs, i)
+      break
+    end
+  end
 end
 
 ---The default config.buf_filter (takes all buflisted files with "", "acwrite", or "help" buftype)
@@ -490,6 +533,12 @@ M.default_buf_filter = function(bufnr)
     return false
   end
   return vim.bo[bufnr].buflisted
+end
+
+---Returns true if a session is currently being loaded
+---@return boolean
+M.is_loading = function()
+  return _is_loading
 end
 
 -- Make sure all the API functions trigger the lazy load
