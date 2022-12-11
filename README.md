@@ -33,7 +33,10 @@ A replacement for `:mksession` with a better API
   - [save_tab(name, opts)](#save_tabname-opts)
   - [save_all(opts)](#save_allopts)
   - [load(name, opts)](#loadname-opts)
+  - [add_hook(name, callback)](#add_hookname-callback)
+  - [remove_hook(name, callback)](#remove_hookname-callback)
   - [default_buf_filter(bufnr)](#default_buf_filterbufnr)
+  - [is_loading()](#is_loading)
 - [Extensions](#extensions)
 - [FAQ](#faq)
 
@@ -426,6 +429,24 @@ The default value of `reset = "auto"` will reset when loading a normal session, 
 loading a tab-scoped session.
 </pre>
 
+### add_hook(name, callback)
+
+`add_hook(name, callback)` \
+Add a callback that runs at a specific time
+| Param    | Type                                               | Desc |
+| -------- | -------------------------------------------------- | - |
+| name     | `"pre_save"\|"post_save"\|"pre_load"\|"post_load"` |   |
+| callback | `fun()`                                            |   |
+
+### remove_hook(name, callback)
+
+`remove_hook(name, callback)` \
+Remove a hook callback
+| Param    | Type                                               | Desc |
+| -------- | -------------------------------------------------- | - |
+| name     | `"pre_save"\|"post_save"\|"pre_load"\|"post_load"` |   |
+| callback | `fun()`                                            |   |
+
 ### default_buf_filter(bufnr)
 
 `default_buf_filter(bufnr): boolean` \
@@ -433,6 +454,11 @@ The default config.buf_filter (takes all buflisted files with "", "acwrite", or 
 | Param | Type      | Desc |
 | ----- | --------- | - |
 | bufnr | `integer` |   |
+
+### is_loading()
+
+`is_loading(): boolean` \
+Returns true if a session is currently being loaded
 
 
 <!-- /API -->

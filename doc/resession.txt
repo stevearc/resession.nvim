@@ -141,12 +141,29 @@ load({name}, {opts})                                              *resession.loa
       The default value of `reset = "auto"` will reset when loading a normal session, but _not_ when
       loading a tab-scoped session.
 
+add_hook({name}, {callback})                                  *resession.add_hook*
+    Add a callback that runs at a specific time
+
+    Parameters:
+      {name}     `"pre_save"|"post_save"|"pre_load"|"post_load"`
+      {callback} `fun()`
+
+remove_hook({name}, {callback})                            *resession.remove_hook*
+    Remove a hook callback
+
+    Parameters:
+      {name}     `"pre_save"|"post_save"|"pre_load"|"post_load"`
+      {callback} `fun()`
+
 default_buf_filter({bufnr}): boolean                *resession.default_buf_filter*
     The default config.buf_filter (takes all buflisted files with "", "acwrite",
     or "help" buftype)
 
     Parameters:
       {bufnr} `integer`
+
+is_loading(): boolean                                       *resession.is_loading*
+    Returns true if a session is currently being loaded
 
 ================================================================================
 vim:tw=80:ts=2:ft=help:norl:syntax=help:

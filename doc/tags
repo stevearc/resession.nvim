@@ -3,14 +3,17 @@ resession	resession.txt	/*resession*
 resession-api	resession.txt	/*resession-api*
 resession-contents	resession.txt	/*resession-contents*
 resession-options	resession.txt	/*resession-options*
+resession.add_hook	resession.txt	/*resession.add_hook*
 resession.default_buf_filter	resession.txt	/*resession.default_buf_filter*
 resession.delete	resession.txt	/*resession.delete*
 resession.detach	resession.txt	/*resession.detach*
 resession.get_current	resession.txt	/*resession.get_current*
+resession.is_loading	resession.txt	/*resession.is_loading*
 resession.list	resession.txt	/*resession.list*
 resession.load	resession.txt	/*resession.load*
 resession.load_extension	resession.txt	/*resession.load_extension*
 resession.nvim	resession.txt	/*resession.nvim*
+resession.remove_hook	resession.txt	/*resession.remove_hook*
 resession.save	resession.txt	/*resession.save*
 resession.save_all	resession.txt	/*resession.save_all*
 resession.save_tab	resession.txt	/*resession.save_tab*
