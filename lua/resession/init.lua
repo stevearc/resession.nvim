@@ -449,6 +449,9 @@ M.load = function(name, opts)
   for i, tab in ipairs(data.tabs) do
     if i > 1 then
       vim.cmd("tabnew")
+      -- Tabnew creates a new empty buffer. Dispose of it when hidden.
+      vim.bo.buflisted = false
+      vim.bo.bufhidden = "wipe"
     end
     if tab.cwd then
       vim.cmd(string.format("tcd %s", tab.cwd))
@@ -530,6 +533,9 @@ M.default_buf_filter = function(bufnr)
     return true
   end
   if buftype ~= "" and buftype ~= "acwrite" then
+    return false
+  end
+  if vim.api.nvim_buf_get_name(bufnr) == "" then
     return false
   end
   return vim.bo[bufnr].buflisted
