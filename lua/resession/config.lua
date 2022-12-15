@@ -55,7 +55,13 @@ M.setup = function(config)
     if ext_config then
       local ext = util.get_extension(ext_name)
       if ext and ext.config then
-        ext.config(ext_config)
+        local ok, err = pcall(ext.config, ext_config)
+        if not ok then
+          vim.notify(
+            string.format("Error configuring resession extension %s: %s", ext_name, err),
+            vim.log.levels.ERROR
+          )
+        end
       end
     end
   end
