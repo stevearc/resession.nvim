@@ -18,8 +18,9 @@ local hooks = setmetatable({
 
 local function do_setup()
   if pending_config then
-    require("resession.config").setup(pending_config)
+    local conf = pending_config
     pending_config = nil
+    require("resession.config").setup(conf)
     has_setup = true
   end
 end
