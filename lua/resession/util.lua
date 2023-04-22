@@ -50,6 +50,19 @@ M.save_buf_options = function(bufnr)
   return ret
 end
 
+---@param bufnr integer
+---@return table<string, any>
+M.save_tab_options = function(bufnr)
+  local ret = {}
+  -- 'cmdheight' is the only tab-local option, but the scope from nvim_get_option_info is incorrect
+  -- since there's no way to fetch a tabpage-local option, we rely on this being called from inside
+  -- the relevant tabpage
+  if vim.tbl_contains(config.options, "cmdheight") then
+    ret.cmdheight = vim.o.cmdheight
+  end
+  return ret
+end
+
 ---@param opts table<string, any>
 M.restore_global_options = function(opts)
   for opt, val in pairs(opts) do
@@ -79,6 +92,15 @@ M.restore_buf_options = function(bufnr, opts)
     if info.scope == "buf" then
       vim.api.nvim_buf_set_option(bufnr, opt, val)
     end
+  end
+end
+
+---@param opts table<string, any>
+M.restore_tab_options = function(opts)
+  -- 'cmdheight' is the only tab-local option. See save_tab_options
+  if opts.cmdheight then
+    -- empirically, this seems to only set the local tab value
+    vim.o.cmdheight = opts.cmdheight
   end
 end
 

@@ -187,17 +187,21 @@ local function save(name, opts, target_tabpage)
       table.insert(data.buffers, buf)
     end
   end
+  local current_tabpage = vim.api.nvim_get_current_tabpage()
   local tabpages = target_tabpage and { target_tabpage } or vim.api.nvim_list_tabpages()
   for _, tabpage in ipairs(tabpages) do
+    vim.api.nvim_set_current_tabpage(tabpage)
     local tab = {}
     local tabnr = vim.api.nvim_tabpage_get_number(tabpage)
     if target_tabpage or vim.fn.haslocaldir(-1, tabnr) == 1 then
       tab.cwd = vim.fn.getcwd(-1, tabnr)
     end
+    tab.options = util.save_tab_options(tabpage)
     table.insert(data.tabs, tab)
     local winlayout = vim.fn.winlayout(tabnr)
     tab.wins = layout.add_win_info_to_layout(tabnr, winlayout)
   end
+  vim.api.nvim_set_current_tabpage(current_tabpage)
 
   for ext_name, ext_config in pairs(config.extensions) do
     local ext = util.get_extension(ext_name)
@@ -461,6 +465,9 @@ M.load = function(name, opts)
     if win then
       curwin = win
     end
+    if tab.options then
+      util.restore_tab_options(tab.options)
+    end
   end
   -- This can be nil if we saved a session in a window with an unsupported buffer
   if curwin then
@@ -482,10 +489,6 @@ M.load = function(name, opts)
     end
   end
 
-  -- We re-apply the options because sometimes the cmdheight gets messed up for some reason
-  for k, v in pairs(data.global.options) do
-    vim.o[k] = v
-  end
   current_session = nil
   if opts.reset then
     tab_sessions = {}
