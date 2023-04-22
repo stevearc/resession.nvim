@@ -121,7 +121,10 @@ local function set_winlayout_data(layout, scale_factor, visit_data)
     if win.extension then
       local ext = util.get_extension(win.extension)
       if ext then
+        -- Re-enable autocmds so if the extensions rely on BufReadCmd it works
+        vim.o.eventignore = ""
         local ok, new_winid = pcall(ext.load_win, win.winid, win.extension_data)
+        vim.o.eventignore = "all"
         if ok then
           win.winid = new_winid or win.winid
         else
@@ -135,7 +138,9 @@ local function set_winlayout_data(layout, scale_factor, visit_data)
       local bufnr = vim.fn.bufadd(win.bufname)
       vim.api.nvim_win_set_buf(win.winid, bufnr)
       -- After setting the buffer into the window, manually set the filetype to trigger syntax highlighting
+      vim.o.eventignore = ""
       vim.api.nvim_buf_set_option(bufnr, "filetype", vim.api.nvim_buf_get_option(bufnr, "filetype"))
+      vim.o.eventignore = "all"
     end
     pcall(vim.api.nvim_win_set_cursor, win.winid, win.cursor)
     util.restore_win_options(win.winid, win.options)

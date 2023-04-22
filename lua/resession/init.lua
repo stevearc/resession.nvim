@@ -157,6 +157,8 @@ local function save(name, opts, target_tabpage)
   local util = require("resession.util")
   local filename = util.get_session_file(name, opts.dir)
   dispatch("pre_save", name, opts, target_tabpage)
+  local eventignore = vim.o.eventignore
+  vim.o.eventignore = "all"
   local data = {
     buffers = {},
     tabs = {},
@@ -227,6 +229,7 @@ local function save(name, opts, target_tabpage)
       dir = opts.dir,
     }
   end
+  vim.o.eventignore = eventignore
   dispatch("post_save", name, opts, target_tabpage)
 end
 
@@ -422,6 +425,8 @@ M.load = function(name, opts)
   else
     open_clean_tab()
   end
+  local eventignore = vim.o.eventignore
+  vim.o.eventignore = "all"
   if not data.tab_scoped then
     -- Set the options immediately
     util.restore_global_options(data.global.options)
@@ -504,6 +509,7 @@ M.load = function(name, opts)
       dir = opts.dir,
     }
   end
+  vim.o.eventignore = eventignore
   _is_loading = false
   dispatch("post_load", name, opts)
 end
