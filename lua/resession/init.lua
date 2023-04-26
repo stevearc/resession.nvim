@@ -427,10 +427,14 @@ M.load = function(name, opts)
     vim.o.columns / data.global.width,
     (vim.o.lines - vim.o.cmdheight) / data.global.height,
   }
+  local bufload_all_success = true
   for _, buf in ipairs(data.buffers) do
     local bufnr = vim.fn.bufadd(buf.name)
     if buf.loaded then
-      vim.fn.bufload(bufnr)
+      -- protected call so that we can continue attempting later buffers
+      -- if this call has an error (e.g. when the buffer has a swap file)
+      local _, success = pcall(vim.fn.bufload, bufnr)
+      bufload_all_success = bufload_all_success and success
       vim.api.nvim_create_autocmd("BufWinEnter", {
         desc = "Resession: complete setup of restored buffer",
         callback = function(args)
@@ -462,8 +466,11 @@ M.load = function(name, opts)
       curwin = win
     end
   end
-  -- This can be nil if we saved a session in a window with an unsupported buffer
-  if curwin then
+  -- `curwin` can be nil if we saved a session in a window with an unsupported buffer.
+  -- Also check that all buffers loaded with success, and if not, give up on setting the window.
+  -- For some reason, without this check nvim crashes, e.g. if some of the loaded files have swap files.
+  -- This might have to do with the 'textlock' restriction, but I'm not sure.
+  if curwin and bufload_all_success then
     vim.api.nvim_set_current_win(curwin)
   end
 
