@@ -51,6 +51,18 @@ A replacement for `:mksession` with a better API
 resession supports all the usual plugin managers
 
 <details>
+  <summary>lazy.nvim</summary>
+
+```lua
+{
+  'stevearc/resession.nvim',
+  opts = {},
+}
+```
+
+</details>
+
+<details>
   <summary>Packer</summary>
 
 ```lua
