@@ -425,8 +425,12 @@ M.load = function(name, opts)
   else
     open_clean_tab()
   end
+  -- Don't trigger autocmds during session load
   local eventignore = vim.o.eventignore
   vim.o.eventignore = "all"
+  -- Ignore all messages (including swapfile messages) during session load
+  local shortmess = vim.o.shortmess
+  vim.o.shortmess = "aAF"
   if not data.tab_scoped then
     -- Set the options immediately
     util.restore_global_options(data.global.options)
@@ -440,12 +444,17 @@ M.load = function(name, opts)
     local bufnr = vim.fn.bufadd(buf.name)
     if buf.loaded then
       vim.fn.bufload(bufnr)
-      vim.api.nvim_create_autocmd("BufWinEnter", {
+      vim.api.nvim_create_autocmd("BufEnter", {
         desc = "Resession: complete setup of restored buffer",
         callback = function(args)
           pcall(vim.api.nvim_win_set_cursor, 0, buf.last_pos)
-          -- After showing the buffer in a window, manually set the filetype to trigger syntax highlighting
-          vim.api.nvim_buf_set_option(bufnr, "filetype", vim.bo[bufnr].filetype)
+          -- We have to schedule :edit otherwise it recurses
+          vim.schedule(function()
+            if vim.api.nvim_get_current_buf() == args.buf then
+              -- This triggers the autocmds that set filetype, syntax highlighting, and checks the swapfile
+              vim.cmd.edit({ mods = { emsg_silent = true } })
+            end
+          end)
         end,
         buffer = bufnr,
         once = true,
@@ -510,8 +519,12 @@ M.load = function(name, opts)
     }
   end
   vim.o.eventignore = eventignore
+  vim.o.shortmess = shortmess
   _is_loading = false
   dispatch("post_load", name, opts)
+
+  -- In case the current buffer has a swapfile, make sure we trigger all the necessary autocmds
+  vim.cmd.edit({ mods = { emsg_silent = true } })
 end
 
 ---Add a callback that runs at a specific time
