@@ -444,17 +444,16 @@ M.load = function(name, opts)
     local bufnr = vim.fn.bufadd(buf.name)
     if buf.loaded then
       vim.fn.bufload(bufnr)
+      vim.b[bufnr]._resession_need_edit = true
       vim.api.nvim_create_autocmd("BufEnter", {
         desc = "Resession: complete setup of restored buffer",
         callback = function(args)
           pcall(vim.api.nvim_win_set_cursor, 0, buf.last_pos)
-          -- We have to schedule :edit otherwise it recurses
-          vim.schedule(function()
-            if vim.api.nvim_get_current_buf() == args.buf then
-              -- This triggers the autocmds that set filetype, syntax highlighting, and checks the swapfile
-              vim.cmd.edit({ mods = { emsg_silent = true } })
-            end
-          end)
+          -- This triggers the autocmds that set filetype, syntax highlighting, and checks the swapfile
+          if vim.b._resession_need_edit then
+            vim.b._resession_need_edit = nil
+            vim.cmd.edit({ mods = { emsg_silent = true } })
+          end
         end,
         buffer = bufnr,
         once = true,
@@ -524,6 +523,7 @@ M.load = function(name, opts)
   dispatch("post_load", name, opts)
 
   -- In case the current buffer has a swapfile, make sure we trigger all the necessary autocmds
+  vim.b._resession_need_edit = nil
   vim.cmd.edit({ mods = { emsg_silent = true } })
 end
 
