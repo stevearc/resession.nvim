@@ -6,8 +6,9 @@ local M = {}
 ---@private
 ---@param tabnr integer
 ---@param winid integer
+---@param current_win integer
 ---@return table|false
-M.get_win_info = function(tabnr, winid)
+M.get_win_info = function(tabnr, winid, current_win)
   local bufnr = vim.api.nvim_win_get_buf(winid)
   local win = {}
   local supported_by_ext = false
@@ -33,7 +34,7 @@ M.get_win_info = function(tabnr, winid)
   end
   win = vim.tbl_extend("error", win, {
     bufname = vim.api.nvim_buf_get_name(bufnr),
-    current = vim.api.nvim_get_current_win() == winid,
+    current = winid == current_win,
     cursor = vim.api.nvim_win_get_cursor(winid),
     width = vim.api.nvim_win_get_width(winid),
     height = vim.api.nvim_win_get_height(winid),
@@ -48,10 +49,11 @@ end
 
 ---@param tabnr integer
 ---@param layout table
-M.add_win_info_to_layout = function(tabnr, layout)
+---@param current_win integer
+M.add_win_info_to_layout = function(tabnr, layout, current_win)
   local type = layout[1]
   if type == "leaf" then
-    layout[2] = M.get_win_info(tabnr, layout[2])
+    layout[2] = M.get_win_info(tabnr, layout[2], current_win)
     if not layout[2] then
       return false
     end
@@ -59,7 +61,7 @@ M.add_win_info_to_layout = function(tabnr, layout)
     local last_slot = 1
     local items = layout[2]
     for _, v in ipairs(items) do
-      local ret = M.add_win_info_to_layout(tabnr, v)
+      local ret = M.add_win_info_to_layout(tabnr, v, current_win)
       if ret then
         items[last_slot] = ret
         last_slot = last_slot + 1

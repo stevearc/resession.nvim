@@ -171,6 +171,7 @@ local function save(name, opts, target_tabpage)
       options = target_tabpage and {} or util.save_global_options(),
     },
   }
+  local current_win = vim.api.nvim_get_current_win()
   local tabpage_bufs = {}
   if target_tabpage then
     for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(target_tabpage)) do
@@ -201,7 +202,7 @@ local function save(name, opts, target_tabpage)
     tab.options = util.save_tab_options(tabpage)
     table.insert(data.tabs, tab)
     local winlayout = vim.fn.winlayout(tabnr)
-    tab.wins = layout.add_win_info_to_layout(tabnr, winlayout)
+    tab.wins = layout.add_win_info_to_layout(tabnr, winlayout, current_win)
   end
   vim.api.nvim_set_current_tabpage(current_tabpage)
 
