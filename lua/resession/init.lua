@@ -127,11 +127,15 @@ M.delete = function(name, opts)
       vim.notify("No saved sessions", vim.log.levels.WARN)
       return
     end
-    vim.ui.select(sessions, { prompt = "Delete session" }, function(selected)
-      if selected then
-        M.delete(selected)
+    vim.ui.select(
+      sessions,
+      { kind = "resession_delete", prompt = "Delete session" },
+      function(selected)
+        if selected then
+          M.delete(selected)
+        end
       end
-    end)
+    )
     return
   end
   local filename = util.get_session_file(name, opts.dir)
@@ -379,7 +383,7 @@ M.load = function(name, opts)
       vim.notify("No saved sessions", vim.log.levels.WARN)
       return
     end
-    local select_opts = { prompt = "Load session" }
+    local select_opts = { kind = "resession_load", prompt = "Load session" }
     if config.load_detail then
       local session_data = {}
       for _, session_name in ipairs(sessions) do
