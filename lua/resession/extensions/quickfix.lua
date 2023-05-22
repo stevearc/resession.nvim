@@ -24,7 +24,7 @@ M.on_load = function(data)
 end
 
 M.is_win_supported = function(winid, bufnr)
-  return vim.api.nvim_buf_get_option(bufnr, "buftype") == "quickfix"
+  return vim.bo[bufnr].buftype == "quickfix"
 end
 
 M.save_win = function(winid)

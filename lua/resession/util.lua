@@ -1,8 +1,19 @@
 local config = require("resession.config")
 local M = {}
 
----@param name
----@return resession.Extension
+---@param opt string
+---@return string
+local function get_option_scope(opt)
+  -- This only exists in nvim-0.9
+  if vim.api.nvim_get_option_info2 then
+    return vim.api.nvim_get_option_info2(opt, {}).scope
+  else
+    return vim.api.nvim_get_option_info(opt).scope
+  end
+end
+
+---@param name string
+---@return nil|resession.Extension
 M.get_extension = function(name)
   local has_ext, ext = pcall(require, string.format("resession.extensions.%s", name))
   if has_ext then
@@ -16,8 +27,7 @@ end
 M.save_global_options = function()
   local ret = {}
   for _, opt in ipairs(config.options) do
-    local info = vim.api.nvim_get_option_info(opt)
-    if info.scope == "global" then
+    if get_option_scope(opt) == "global" then
       ret[opt] = vim.go[opt]
     end
   end
@@ -29,9 +39,8 @@ end
 M.save_win_options = function(winid)
   local ret = {}
   for _, opt in ipairs(config.options) do
-    local info = vim.api.nvim_get_option_info(opt)
-    if info.scope == "win" then
-      ret[opt] = vim.api.nvim_win_get_option(winid, opt)
+    if get_option_scope(opt) == "win" then
+      ret[opt] = vim.wo[winid][opt]
     end
   end
   return ret
@@ -42,9 +51,8 @@ end
 M.save_buf_options = function(bufnr)
   local ret = {}
   for _, opt in ipairs(config.options) do
-    local info = vim.api.nvim_get_option_info(opt)
-    if info.scope == "buf" then
-      ret[opt] = vim.api.nvim_buf_get_option(bufnr, opt)
+    if get_option_scope(opt) == "buf" then
+      ret[opt] = vim.bo[bufnr][opt]
     end
   end
   return ret
@@ -66,8 +74,7 @@ end
 ---@param opts table<string, any>
 M.restore_global_options = function(opts)
   for opt, val in pairs(opts) do
-    local info = vim.api.nvim_get_option_info(opt)
-    if info.scope == "global" then
+    if get_option_scope(opt) == "global" then
       vim.go[opt] = val
     end
   end
@@ -77,9 +84,8 @@ end
 ---@param opts table<string, any>
 M.restore_win_options = function(winid, opts)
   for opt, val in pairs(opts) do
-    local info = vim.api.nvim_get_option_info(opt)
-    if info.scope == "win" then
-      vim.api.nvim_win_set_option(winid, opt, val)
+    if get_option_scope(opt) == "win" then
+      vim.wo[winid][opt] = val
     end
   end
 end
@@ -88,9 +94,8 @@ end
 ---@param opts table<string, any>
 M.restore_buf_options = function(bufnr, opts)
   for opt, val in pairs(opts) do
-    local info = vim.api.nvim_get_option_info(opt)
-    if info.scope == "buf" then
-      vim.api.nvim_buf_set_option(bufnr, opt, val)
+    if get_option_scope(opt) == "buf" then
+      vim.bo[bufnr][opt] = val
     end
   end
 end
@@ -132,6 +137,9 @@ end
 
 M.shorten_path = function(path)
   local home = os.getenv("HOME")
+  if not home then
+    return path
+  end
   local idx, chars = string.find(path, home)
   if idx == 1 then
     return "~" .. string.sub(path, idx + chars)

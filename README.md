@@ -44,7 +44,7 @@ A replacement for `:mksession` with a better API
 
 ## Requirements
 
-- Neovim 0.5+
+- Neovim 0.8+
 
 ## Installation
 
