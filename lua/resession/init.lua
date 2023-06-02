@@ -114,7 +114,7 @@ local function remove_tabpage_session(name)
 end
 
 ---Delete a saved session
----@param name string
+---@param name string?
 ---@param opts resession.DeleteOpts?
 ---    dir nil|string Name of directory to save to (overrides config.dir)
 M.delete = function(name, opts)
@@ -271,7 +271,7 @@ M.save = function(name, opts)
 end
 
 ---Save a tab-scoped session
----@param name string
+---@param name string?
 ---@param opts resession.SaveOpts?
 ---    attach nil|boolean Stay attached to session after saving (default true)
 ---    notify nil|boolean Notify on success
