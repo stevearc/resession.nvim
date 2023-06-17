@@ -85,7 +85,7 @@ end
 M.restore_win_options = function(winid, opts)
   for opt, val in pairs(opts) do
     if get_option_scope(opt) == "win" then
-      vim.wo[winid][opt] = val
+      vim.api.nvim_set_option_value(opt, val, { scope = "local", win = winid })
     end
   end
 end
