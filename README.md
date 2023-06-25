@@ -364,9 +364,14 @@ Load an extension some time after calling setup()
 
 ### get_current()
 
-`get_current(): nil|string` \
+`get_current(): string` \
 Get the name of the current session
 
+
+Returns:
+| Type   | Desc |
+| ------ | ---- |
+| string | ?    |
 
 ### detach()
 

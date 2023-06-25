@@ -68,9 +68,11 @@ load_extension({name}, {opts})                          *resession.load_extensio
       {name} `string` Name of the extension
       {opts} `table` Configuration options for extension
 
-get_current(): nil|string                                  *resession.get_current*
+get_current(): string                                      *resession.get_current*
     Get the name of the current session
 
+    Returns:
+      `string` ?
 
 detach()                                                        *resession.detach*
     Detach from the current session
