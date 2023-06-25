@@ -13,7 +13,7 @@ local function get_option_scope(opt)
 end
 
 ---@param name string
----@return nil|resession.Extension
+---@return resession.Extension?
 M.get_extension = function(name)
   local has_ext, ext = pcall(require, string.format("resession.extensions.%s", name))
   if has_ext then

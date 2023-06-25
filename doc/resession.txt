@@ -3,8 +3,8 @@
 --------------------------------------------------------------------------------
 CONTENTS                                                      *resession-contents*
 
-  1. Options...............................................|resession-options|
-  2. Api.......................................................|resession-api|
+  1. Options                                               |resession-options|
+  2. Api                                                       |resession-api|
 
 --------------------------------------------------------------------------------
 OPTIONS                                                        *resession-options*
@@ -87,7 +87,7 @@ delete({name}, {opts})                                          *resession.delet
     Delete a saved session
 
     Parameters:
-      {name} `string`
+      {name} `nil|string` If not provided, prompt for session to delete
       {opts} `nil|resession.DeleteOpts`
           {dir} `nil|string` Name of directory to save to (overrides config.dir)
 
@@ -107,7 +107,7 @@ save_tab({name}, {opts})                                      *resession.save_ta
     Save a tab-scoped session
 
     Parameters:
-      {name} `string`
+      {name} `nil|string` If not provided, will prompt user for session name
       {opts} `nil|resession.SaveOpts`
           {attach} `nil|boolean` Stay attached to session after saving (default
                    true)

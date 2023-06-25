@@ -162,7 +162,7 @@ end
 
 ---@param layout table
 ---@param scale_factor number[] Scaling factor for [width, height]
----@return nil|integer The window that should have focus after session load
+---@return integer? The window that should have focus after session load
 M.set_winlayout = function(layout, scale_factor)
   if not layout then
     return

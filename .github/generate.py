@@ -2,13 +2,15 @@ import os
 import re
 from typing import List
 
-from nvim_doc_tools.apidoc import parse_functions, render_api_md, render_api_vimdoc
-from nvim_doc_tools.util import (
+from nvim_doc_tools import (
     Vimdoc,
     VimdocSection,
     generate_md_toc,
     indent,
+    parse_functions,
     read_section,
+    render_md_api,
+    render_vimdoc_api,
     replace_section,
 )
 
@@ -19,7 +21,6 @@ DOC = os.path.join(ROOT, "doc")
 VIMDOC = os.path.join(DOC, "resession.txt")
 
 
-
 def update_config_options():
     config_file = os.path.join(ROOT, "lua", "resession", "config.lua")
     opt_lines = read_section(config_file, r"^local default_config =", r"^}$")
@@ -27,7 +28,9 @@ def update_config_options():
         README,
         r"^<!-- Setup -->$",
         r"^<!-- /Setup -->$",
-        ['\n', '```lua\n', 'require("resession").setup({\n'] + opt_lines + ['})\n', '```\n', '\n'],
+        ["\n", "```lua\n", 'require("resession").setup({\n']
+        + opt_lines
+        + ["})\n", "```\n", "\n"],
     )
 
 
@@ -42,14 +45,15 @@ def get_options_vimdoc() -> "VimdocSection":
     return section
 
 
-
 def generate_vimdoc():
     doc = Vimdoc("resession.txt", "resession")
-    funcs = parse_functions(os.path.join(ROOT, 'lua', 'resession', 'init.lua'))
+    funcs = parse_functions(os.path.join(ROOT, "lua", "resession", "init.lua"))
     doc.sections.extend(
         [
             get_options_vimdoc(),
-            VimdocSection("API", "resession-api", render_api_vimdoc('resession', funcs)),
+            VimdocSection(
+                "API", "resession-api", render_vimdoc_api("resession", funcs)
+            ),
         ]
     )
 
@@ -58,8 +62,8 @@ def generate_vimdoc():
 
 
 def update_md_api():
-    funcs = parse_functions(os.path.join(ROOT, 'lua', 'resession', 'init.lua'))
-    lines = ["\n"] + render_api_md(funcs) + ["\n"]
+    funcs = parse_functions(os.path.join(ROOT, "lua", "resession", "init.lua"))
+    lines = ["\n"] + render_md_api(funcs) + ["\n"]
     replace_section(
         README,
         r"^<!-- API -->$",

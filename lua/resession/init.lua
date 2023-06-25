@@ -61,7 +61,7 @@ M.load_extension = function(name, opts)
 end
 
 ---Get the name of the current session
----@return nil|string
+---@return string?
 M.get_current = function()
   local tabpage = vim.api.nvim_get_current_tabpage()
   return tab_sessions[tabpage] or current_session
@@ -75,8 +75,8 @@ M.detach = function()
 end
 
 ---List all available saved sessions
----@param opts nil|resession.ListOpts
----    dir nil|string Name of directory to save to (overrides config.dir)
+---@param opts? resession.ListOpts
+---    dir? string Name of directory to save to (overrides config.dir)
 ---@return string[]
 M.list = function(opts)
   opts = opts or {}
@@ -114,9 +114,9 @@ local function remove_tabpage_session(name)
 end
 
 ---Delete a saved session
----@param name string
----@param opts nil|resession.DeleteOpts
----    dir nil|string Name of directory to save to (overrides config.dir)
+---@param name? string If not provided, prompt for session to delete
+---@param opts? resession.DeleteOpts
+---    dir? string Name of directory to save to (overrides config.dir)
 M.delete = function(name, opts)
   opts = opts or {}
   local files = require("resession.files")
@@ -150,10 +150,10 @@ end
 
 ---@param name string
 ---@param opts resession.SaveOpts
----    attach nil|boolean Stay attached to session after saving (default true)
----    notify nil|boolean Notify on success
----    dir nil|string Name of directory to save to (overrides config.dir)
----@param target_tabpage nil|integer
+---    attach? boolean Stay attached to session after saving (default true)
+---    notify? boolean Notify on success
+---    dir? string Name of directory to save to (overrides config.dir)
+---@param target_tabpage? integer
 local function save(name, opts, target_tabpage)
   local config = require("resession.config")
   local files = require("resession.files")
@@ -239,11 +239,11 @@ local function save(name, opts, target_tabpage)
 end
 
 ---Save a session to disk
----@param name nil|string
----@param opts nil|resession.SaveOpts
----    attach nil|boolean Stay attached to session after saving (default true)
----    notify nil|boolean Notify on success
----    dir nil|string Name of directory to save to (overrides config.dir)
+---@param name? string
+---@param opts? resession.SaveOpts
+---    attach? boolean Stay attached to session after saving (default true)
+---    notify? boolean Notify on success
+---    dir? string Name of directory to save to (overrides config.dir)
 M.save = function(name, opts)
   opts = vim.tbl_extend("keep", opts or {}, {
     notify = true,
@@ -271,11 +271,11 @@ M.save = function(name, opts)
 end
 
 ---Save a tab-scoped session
----@param name string
----@param opts nil|resession.SaveOpts
----    attach nil|boolean Stay attached to session after saving (default true)
----    notify nil|boolean Notify on success
----    dir nil|string Name of directory to save to (overrides config.dir)
+---@param name? string If not provided, will prompt user for session name
+---@param opts? resession.SaveOpts
+---    attach? boolean Stay attached to session after saving (default true)
+---    notify? boolean Notify on success
+---    dir? string Name of directory to save to (overrides config.dir)
 M.save_tab = function(name, opts)
   opts = vim.tbl_extend("keep", opts or {}, {
     notify = true,
@@ -304,8 +304,8 @@ M.save_tab = function(name, opts)
 end
 
 ---Save all current sessions to disk
----@param opts nil|table
----    notify nil|boolean
+---@param opts? table
+---    notify? boolean
 M.save_all = function(opts)
   opts = vim.tbl_extend("keep", opts or {}, {
     notify = true,
@@ -359,12 +359,12 @@ end
 
 local _is_loading = false
 ---Load a session
----@param name nil|string
----@param opts nil|resession.LoadOpts
----    attach nil|boolean Stay attached to session after loading (default true)
----    reset nil|boolean|"auto" Close everthing before loading the session (default "auto")
----    silence_errors nil|boolean Don't error when trying to load a missing session
----    dir nil|string Name of directory to load from (overrides config.dir)
+---@param name? string
+---@param opts? resession.LoadOpts
+---    attach? boolean Stay attached to session after loading (default true)
+---    reset? boolean|"auto" Close everthing before loading the session (default "auto")
+---    silence_errors? boolean Don't error when trying to load a missing session
+---    dir? string Name of directory to load from (overrides config.dir)
 ---@note
 --- The default value of `reset = "auto"` will reset when loading a normal session, but _not_ when
 --- loading a tab-scoped session.
