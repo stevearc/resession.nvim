@@ -12,11 +12,26 @@ local function get_option_scope(opt)
   end
 end
 
+local ext_cache = {}
 ---@param name string
 ---@return resession.Extension?
 M.get_extension = function(name)
+  if ext_cache[name] then
+    return ext_cache[name]
+  end
   local has_ext, ext = pcall(require, string.format("resession.extensions.%s", name))
   if has_ext then
+    if ext.config then
+      local ok, err = pcall(ext.config, config.extensions[name])
+      if not ok then
+        vim.notify_once(
+          string.format("Error configuring resession extension %s: %s", name, err),
+          vim.log.levels.ERROR
+        )
+        return
+      end
+    end
+    ext_cache[name] = ext
     return ext
   else
     vim.notify_once(string.format("[resession] Missing extension '%s'", name), vim.log.levels.WARN)

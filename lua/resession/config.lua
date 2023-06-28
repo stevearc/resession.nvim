@@ -44,26 +44,10 @@ local default_config = {
 local autosave_timer
 M.setup = function(config)
   local resession = require("resession")
-  local util = require("resession.util")
   local newconf = vim.tbl_deep_extend("force", default_config, config)
 
   for k, v in pairs(newconf) do
     M[k] = v
-  end
-
-  for ext_name, ext_config in pairs(M.extensions) do
-    if ext_config then
-      local ext = util.get_extension(ext_name)
-      if ext and ext.config then
-        local ok, err = pcall(ext.config, ext_config)
-        if not ok then
-          vim.notify(
-            string.format("Error configuring resession extension %s: %s", ext_name, err),
-            vim.log.levels.ERROR
-          )
-        end
-      end
-    end
   end
 
   if autosave_timer then

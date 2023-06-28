@@ -48,10 +48,7 @@ M.load_extension = function(name, opts)
     local config = require("resession.config")
     local util = require("resession.util")
     config.extensions[name] = opts
-    local ext = util.get_extension(name)
-    if ext and ext.config then
-      ext.config(opts)
-    end
+    util.get_extension(name)
   elseif pending_config then
     pending_config.extensions = pending_config.extensions or {}
     pending_config.extensions[name] = opts
