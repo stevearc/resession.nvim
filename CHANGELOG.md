@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/stevearc/resession.nvim/compare/v1.0.0...v1.1.0) (2023-07-17)
+
+
+### Features
+
+* defer loading extensions until needed ([6ec6f20](https://github.com/stevearc/resession.nvim/commit/6ec6f20cf2cf3dc9c23a06deba36e1d2de9c75a4))
+
 ## 1.0.0 (2023-06-26)
 
 
