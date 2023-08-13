@@ -112,7 +112,7 @@ end
 ---@param filename string
 ---@param obj any
 M.write_json_file = function(filename, obj)
-  ---@diagnostic disable-next-line param-type-mismatch
+  ---@diagnostic disable-next-line: param-type-mismatch
   M.write_file(filename, vim.json.encode(obj))
 end
 

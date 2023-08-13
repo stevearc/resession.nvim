@@ -85,9 +85,9 @@ M.list = function(opts)
   if not files.exists(session_dir) then
     return {}
   end
-  ---@diagnostic disable-next-line param-type-mismatch
+  ---@diagnostic disable-next-line: param-type-mismatch
   local fd = assert(uv.fs_opendir(session_dir, nil, 32))
-  ---@diagnostic disable-next-line cast-type-mismatch
+  ---@diagnostic disable-next-line: cast-type-mismatch
   ---@cast fd luv_dir_t
   local entries = uv.fs_readdir(fd)
   local ret = {}
