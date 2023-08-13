@@ -1,10 +1,12 @@
 local M = {}
 
----@type boolean
-M.is_windows = vim.loop.os_uname().version:match("Windows")
+local uv = vim.uv or vim.loop
 
 ---@type boolean
-M.is_mac = vim.loop.os_uname().sysname == "Darwin"
+M.is_windows = uv.os_uname().version:match("Windows")
+
+---@type boolean
+M.is_mac = uv.os_uname().sysname == "Darwin"
 
 ---@type string
 M.sep = M.is_windows and "\\" or "/"
@@ -23,7 +25,7 @@ end
 ---@param filepath string
 ---@return boolean
 M.exists = function(filepath)
-  local stat = vim.loop.fs_stat(filepath)
+  local stat = uv.fs_stat(filepath)
   return stat ~= nil and stat.type ~= nil
 end
 
@@ -59,10 +61,10 @@ M.read_file = function(filepath)
   if not M.exists(filepath) then
     return nil
   end
-  local fd = vim.loop.fs_open(filepath, "r", 420) -- 0644
-  local stat = vim.loop.fs_fstat(fd)
-  local content = vim.loop.fs_read(fd, stat.size)
-  vim.loop.fs_close(fd)
+  local fd = assert(uv.fs_open(filepath, "r", 420)) -- 0644
+  local stat = assert(uv.fs_fstat(fd))
+  local content = uv.fs_read(fd, stat.size)
+  uv.fs_close(fd)
   return content
 end
 
@@ -86,7 +88,7 @@ M.mkdir = function(dirname, perms)
     if not M.exists(parent) then
       M.mkdir(parent)
     end
-    vim.loop.fs_mkdir(dirname, perms)
+    uv.fs_mkdir(dirname, perms)
   end
 end
 
@@ -94,15 +96,15 @@ end
 ---@param contents string
 M.write_file = function(filename, contents)
   M.mkdir(vim.fn.fnamemodify(filename, ":h"))
-  local fd = vim.loop.fs_open(filename, "w", 420) -- 0644
-  vim.loop.fs_write(fd, contents)
-  vim.loop.fs_close(fd)
+  local fd = assert(uv.fs_open(filename, "w", 420)) -- 0644
+  uv.fs_write(fd, contents)
+  uv.fs_close(fd)
 end
 
 ---@param filename string
 M.delete_file = function(filename)
   if M.exists(filename) then
-    vim.loop.fs_unlink(filename)
+    uv.fs_unlink(filename)
     return true
   end
 end
@@ -110,6 +112,7 @@ end
 ---@param filename string
 ---@param obj any
 M.write_json_file = function(filename, obj)
+  ---@diagnostic disable-next-line param-type-mismatch
   M.write_file(filename, vim.json.encode(obj))
 end
 

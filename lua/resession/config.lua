@@ -1,5 +1,7 @@
 local M = {}
 
+local uv = vim.uv or vim.loop
+
 local default_config = {
   -- Options for automatically saving sessions on a timer
   autosave = {
@@ -62,7 +64,7 @@ M.setup = function(config)
         resession.save_all({ notify = false })
       end,
     })
-    autosave_timer = vim.loop.new_timer()
+    autosave_timer = assert(uv.new_timer())
     autosave_timer:start(
       M.autosave.interval * 1000,
       M.autosave.interval * 1000,

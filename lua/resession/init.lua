@@ -1,5 +1,7 @@
 local M = {}
 
+local uv = vim.uv or vim.loop
+
 local has_setup = false
 local pending_config
 local current_session
@@ -83,8 +85,11 @@ M.list = function(opts)
   if not files.exists(session_dir) then
     return {}
   end
-  local fd = vim.loop.fs_opendir(session_dir, nil, 32)
-  local entries = vim.loop.fs_readdir(fd)
+  ---@diagnostic disable-next-line param-type-mismatch
+  local fd = assert(uv.fs_opendir(session_dir, nil, 32))
+  ---@diagnostic disable-next-line cast-type-mismatch
+  ---@cast fd luv_dir_t
+  local entries = uv.fs_readdir(fd)
   local ret = {}
   while entries do
     for _, entry in ipairs(entries) do
@@ -95,9 +100,9 @@ M.list = function(opts)
         end
       end
     end
-    entries = vim.loop.fs_readdir(fd)
+    entries = uv.fs_readdir(fd)
   end
-  vim.loop.fs_closedir(fd)
+  uv.fs_closedir(fd)
   return ret
 end
 
