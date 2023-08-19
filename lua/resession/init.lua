@@ -438,18 +438,18 @@ M.load = function(name, opts)
   -- Ignore all messages (including swapfile messages) during session load
   local shortmess = vim.o.shortmess
   vim.o.shortmess = "aAF"
-  if not data.tab_scoped then
-    -- Set the options immediately
-    util.restore_global_options(data.global.options)
-    vim.cmd(string.format("cd %s", data.global.cwd))
-  end
   local scale = {
     vim.o.columns / data.global.width,
     (vim.o.lines - vim.o.cmdheight) / data.global.height,
   }
-  for _, buf in ipairs(data.buffers) do
+  for i, buf in ipairs(data.buffers) do
     local bufnr = vim.fn.bufadd(buf.name)
     if buf.loaded then
+      -- Set global options before loading the first buffer
+      if i == 1 and not data.tab_scoped then
+        util.restore_global_options(data.global.options)
+        vim.api.nvim_set_current_dir(data.global.cwd)
+      end
       vim.fn.bufload(bufnr)
       vim.b[bufnr]._resession_need_edit = true
       vim.api.nvim_create_autocmd("BufEnter", {
