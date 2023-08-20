@@ -441,7 +441,6 @@ M.load = function(name, opts)
   if not data.tab_scoped then
     -- Set the options immediately
     util.restore_global_options(data.global.options)
-    vim.cmd(string.format("cd %s", data.global.cwd))
   end
   local scale = {
     vim.o.columns / data.global.width,
@@ -470,6 +469,11 @@ M.load = function(name, opts)
     util.restore_buf_options(bufnr, buf.options)
   end
 
+  -- Ensure the cwd is set correctly for each loaded buffer
+  if not data.tab_scoped then
+    vim.api.nvim_set_current_dir(data.global.cwd)
+  end
+
   local curwin
   for i, tab in ipairs(data.tabs) do
     if i > 1 then
@@ -488,11 +492,6 @@ M.load = function(name, opts)
     if tab.options then
       util.restore_tab_options(tab.options)
     end
-  end
-
-  -- Ensure the cwd is set correctly for each loaded buffer
-  if not data.tab_scoped then
-    vim.api.nvim_set_current_dir(data.global.cwd)
   end
 
   -- This can be nil if we saved a session in a window with an unsupported buffer
