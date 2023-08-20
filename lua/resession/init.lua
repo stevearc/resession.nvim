@@ -489,6 +489,12 @@ M.load = function(name, opts)
       util.restore_tab_options(tab.options)
     end
   end
+
+  -- Ensure the cwd is set correctly for each loaded buffer
+  if not data.tab_scoped then
+    vim.api.nvim_set_current_dir(data.global.cwd)
+  end
+
   -- This can be nil if we saved a session in a window with an unsupported buffer
   if curwin then
     vim.api.nvim_set_current_win(curwin)
