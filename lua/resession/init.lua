@@ -441,7 +441,6 @@ M.load = function(name, opts)
   if not data.tab_scoped then
     -- Set the options immediately
     util.restore_global_options(data.global.options)
-    vim.cmd(string.format("cd %s", data.global.cwd))
   end
   local scale = {
     vim.o.columns / data.global.width,
