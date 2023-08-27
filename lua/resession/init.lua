@@ -1,5 +1,8 @@
 local M = {}
 
+-- TODO remove after https://github.com/folke/neodev.nvim/pull/163 lands
+---@diagnostic disable: inject-field
+
 local uv = vim.uv or vim.loop
 
 local has_setup = false
