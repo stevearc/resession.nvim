@@ -369,6 +369,7 @@ Get the name of the current session
 
 
 Returns:
+
 | Type   | Desc |
 | ------ | ---- |
 | string | ?    |
@@ -489,7 +490,6 @@ The default config.buf_filter (takes all buflisted files with "", "acwrite", or 
 
 `is_loading(): boolean` \
 Returns true if a session is currently being loaded
-
 
 
 <!-- /API -->

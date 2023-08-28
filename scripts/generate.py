@@ -63,7 +63,7 @@ def generate_vimdoc():
 
 def update_md_api():
     funcs = parse_functions(os.path.join(ROOT, "lua", "resession", "init.lua"))
-    lines = ["\n"] + render_md_api(funcs) + ["\n"]
+    lines = ["\n"] + render_md_api(funcs)
     replace_section(
         README,
         r"^<!-- API -->$",
