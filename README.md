@@ -165,7 +165,7 @@ Same as above, but have a separate session for each git branch in a directory.
 ```lua
 local function get_session_name()
   local name = vim.fn.getcwd()
-  local branch = vim.fn.system("git branch --show-current")
+  local branch = vim.trim(vim.fn.system("git branch --show-current"))
   if vim.v.shell_error == 0 then
     return name .. branch
   else
