@@ -1,4 +1,6 @@
-.PHONY: doc test lint
+.PHONY: doc test lint fastlint all
+
+all: doc lint test
 
 doc: scripts/nvim_doc_tools
 	python scripts/main.py generate
@@ -6,10 +8,12 @@ doc: scripts/nvim_doc_tools
 test:
 	./run_tests.sh
 
-lint: scripts/nvim-typecheck-action scripts/nvim_doc_tools
+fastlint: scripts/nvim_doc_tools
 	python scripts/main.py lint
 	luacheck lua tests --formatter plain
 	stylua --check lua tests
+
+lint: scripts/nvim-typecheck-action fastlint
 	./scripts/nvim-typecheck-action/typecheck.sh lua
 
 scripts/nvim_doc_tools:
