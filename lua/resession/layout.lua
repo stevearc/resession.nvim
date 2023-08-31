@@ -22,7 +22,7 @@ M.get_win_info = function(tabnr, winid, current_win)
         supported_by_ext = true
       else
         vim.notify(
-          string.format("[resession] Extension %s save_win error: %s", ext_name, extension_data),
+          string.format('[resession] Extension "%s" save_win error: %s', ext_name, extension_data),
           vim.log.levels.ERROR
         )
       end
@@ -131,7 +131,7 @@ local function set_winlayout_data(layout, scale_factor, visit_data)
           win.winid = new_winid or win.winid
         else
           vim.notify(
-            string.format("[resession] Extension %s load_win error: %s", win.extension, new_winid),
+            string.format('[resession] Extension "%s" load_win error: %s', win.extension, new_winid),
             vim.log.levels.ERROR
           )
         end
