@@ -138,6 +138,7 @@ M.delete = function(name, opts)
       function(selected)
         if selected then
           M.delete(selected)
+          M.delete()
         end
       end
     )
