@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.1](https://github.com/stevearc/resession.nvim/compare/v1.1.0...v1.1.1) (2023-09-02)
+
+
+### Bug Fixes
+
+* cwd not set upon loading first buffer ([#20](https://github.com/stevearc/resession.nvim/issues/20)) ([d0ad06e](https://github.com/stevearc/resession.nvim/commit/d0ad06e5063524b022254ac3aa80ac9a332c9c14))
+* tab-scoped cwd not being set ([#21](https://github.com/stevearc/resession.nvim/issues/21)) ([c5f0b36](https://github.com/stevearc/resession.nvim/commit/c5f0b362c953a0ed97e337332882ff32ae72c364))
+* type annotations and errors ([d0fe351](https://github.com/stevearc/resession.nvim/commit/d0fe35176d332dbc75f51e4cb4f89afc4755e8e8))
+
 ## [1.1.0](https://github.com/stevearc/resession.nvim/compare/v1.0.0...v1.1.0) (2023-07-17)
 
 
