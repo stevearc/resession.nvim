@@ -26,7 +26,7 @@ M.get_extension = function(name)
       local ok, err = pcall(ext.config, config.extensions[name])
       if not ok then
         vim.notify_once(
-          string.format("Error configuring resession extension %s: %s", name, err),
+          string.format('Error configuring resession extension "%s": %s', name, err),
           vim.log.levels.ERROR
         )
         return
@@ -35,7 +35,7 @@ M.get_extension = function(name)
     ext_cache[name] = ext
     return ext
   else
-    vim.notify_once(string.format("[resession] Missing extension '%s'", name), vim.log.levels.WARN)
+    vim.notify_once(string.format('[resession] Missing extension "%s"', name), vim.log.levels.WARN)
   end
 end
 

@@ -17,7 +17,7 @@ local hooks = setmetatable({
   post_save = {},
 }, {
   __index = function(t, key)
-    error(string.format("Unrecognized hook '%s'", key))
+    error(string.format('Unrecognized hook "%s"', key))
   end,
 })
 
@@ -145,7 +145,7 @@ M.delete = function(name, opts)
   end
   local filename = util.get_session_file(name, opts.dir)
   if not files.delete_file(filename) then
-    error(string.format("No session '%s'", filename))
+    error(string.format('No session "%s"', filename))
   end
   if current_session == name then
     current_session = nil
@@ -223,7 +223,7 @@ local function save(name, opts, target_tabpage)
         data[ext_name] = ext_data
       else
         vim.notify(
-          string.format("[resession] Extension %s save error: %s", ext_name, ext_data),
+          string.format('[resession] Extension "%s" save error: %s', ext_name, ext_data),
           vim.log.levels.ERROR
         )
       end
@@ -232,7 +232,7 @@ local function save(name, opts, target_tabpage)
 
   files.write_json_file(filename, data)
   if opts.notify then
-    vim.notify(string.format("Saved session %s", name))
+    vim.notify(string.format('Saved session "%s"', name))
   end
   if opts.attach then
     session_configs[name] = {
@@ -421,7 +421,7 @@ M.load = function(name, opts)
   local data = files.load_json_file(filename)
   if not data then
     if not opts.silence_errors then
-      error(string.format("Could not find session %s", name))
+      error(string.format('Could not find session "%s"', name))
     end
     return
   end
@@ -509,7 +509,7 @@ M.load = function(name, opts)
         local ok, err = pcall(ext.on_load, data[ext_name])
         if not ok then
           vim.notify(
-            string.format("[resession] Extension %s load error: %s", ext_name, err),
+            string.format('[resession] Extension "%s" load error: %s', ext_name, err),
             vim.log.levels.ERROR
           )
         end
