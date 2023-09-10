@@ -503,7 +503,7 @@ M.load = function(name, opts)
   end
 
   for ext_name in pairs(config.extensions) do
-    if data[ext_name] then
+    if data[ext_name] and not vim.tbl_isempty(data[ext_name]) then
       local ext = util.get_extension(ext_name)
       if ext then
         local ok, err = pcall(ext.on_load, data[ext_name])
