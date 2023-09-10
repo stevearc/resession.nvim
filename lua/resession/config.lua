@@ -43,7 +43,7 @@ local default_config = {
   extensions = {
     quickfix = {},
   },
-  -- list style ["default", "default_numbered", "dir_only", "dir_only_numbered"]
+  -- list style ["default", "default_numbered", "detail_only", "detail_only_numbered"]
   load_style = "default",
   -- list order ["modification_time", "creation_time", filename]
   load_order = "modification_time",
@@ -82,3 +82,4 @@ M.setup = function(config)
 end
 
 return M
+

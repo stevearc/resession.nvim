@@ -437,9 +437,9 @@ M.load = function(name, opts)
               formatted = session_name .. string.format(" (tab) " .. pattern, util.shorten_path(tab_cwd))
             elseif config.load_style == "default_numbered" then
               formatted = data.item_number .. " - " .. session_name .. string.format(" (tab) " .. pattern, util.shorten_path(tab_cwd))
-            elseif config.load_style == "dir_only" then
+            elseif config.load_style == "detail_only" then
               formatted = string.format(" (tab) " .. pattern, util.shorten_path(tab_cwd))
-            elseif config.load_style == "dir_only_numbered" then
+            elseif config.load_style == "detail_only_numbered" then
               formatted = data.item_number .. string.format(" - (tab) " .. pattern, util.shorten_path(tab_cwd))
             end
           else -- option load_list_style
@@ -447,9 +447,9 @@ M.load = function(name, opts)
               formatted = session_name .. string.format(" " .. pattern, util.shorten_path(data.global.cwd))
             elseif config.load_style == "default_numbered" then
               formatted = data.item_number .. " - " .. session_name .. string.format(" " .. pattern, util.shorten_path(data.global.cwd))
-            elseif config.load_style == "dir_only" then
+            elseif config.load_style == "detail_only" then
               formatted = string.format(" " .. pattern, util.shorten_path(data.global.cwd))
-            elseif config.load_style == "dir_only_numbered" then
+            elseif config.load_style == "detail_only_numbered" then
               formatted = data.item_number .. string.format(" - " .. pattern, util.shorten_path(data.global.cwd))
             end
           end
