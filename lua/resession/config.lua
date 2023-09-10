@@ -37,10 +37,16 @@ local default_config = {
   -- Show more detail about the sessions when selecting one to load.
   -- Disable if it causes lag.
   load_detail = true,
+  detail_separator_left = "[",
+  detail_separator_right = "]",
   -- Configuration for extensions
   extensions = {
     quickfix = {},
   },
+  -- list style ["default", "default_numbered", "dir_only", "dir_only_numbered"]
+  load_style = "default",
+  -- list order ["modification_time", "creation_time", filename]
+  load_order = "modification_time",
 }
 
 local autosave_timer

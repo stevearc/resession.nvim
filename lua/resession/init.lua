@@ -82,18 +82,20 @@ end
 ---@return string[]
 M.list = function(opts)
   opts = opts or {}
+  local config = require("resession.config")
   local files = require("resession.files")
   local util = require("resession.util")
   local session_dir = util.get_session_dir(opts.dir)
   if not files.exists(session_dir) then
     return {}
   end
-  ---@diagnostic disable-next-line: param-type-mismatch
+  ---@diagnostic disable-next-line: param-type-mismatch                   │
   local fd = assert(uv.fs_opendir(session_dir, nil, 32))
-  ---@diagnostic disable-next-line: cast-type-mismatch
+  ---@diagnostic disable-next-line: param-type-mismatch                   │
   ---@cast fd luv_dir_t
   local entries = uv.fs_readdir(fd)
   local ret = {}
+
   while entries do
     for _, entry in ipairs(entries) do
       if entry.type == "file" then
@@ -105,9 +107,33 @@ M.list = function(opts)
     end
     entries = uv.fs_readdir(fd)
   end
+
   uv.fs_closedir(fd)
+
+  -- Apply order
+  if config.load_order == "filename" then
+    -- Sort by filename
+    table.sort(ret)
+  elseif config.load_order == "modification_time" then
+    -- Sort by modification_time
+    table.sort(ret, function(a, b)
+      local file_a = uv.fs_stat(session_dir .. "/" .. a .. ".json")
+      local file_b = uv.fs_stat(session_dir .. "/" .. b .. ".json")
+      return file_a.mtime.sec > file_b.mtime.sec
+    end)
+  elseif config.load_order == "creation_time" then
+    -- Sort by creation_time in descending order (most recent first)
+    table.sort(ret, function(a, b)
+      local file_a = uv.fs_stat(session_dir .. "/" .. a .. ".json")
+      local file_b = uv.fs_stat(session_dir .. "/" .. b .. ".json")
+      return file_a.ctime.sec > file_b.ctime.sec
+    end)
+  end
+
   return ret
 end
+
+
 
 local function remove_tabpage_session(name)
   for k, v in pairs(tab_sessions) do
@@ -391,20 +417,41 @@ M.load = function(name, opts)
     local select_opts = { kind = "resession_load", prompt = "Load session" }
     if config.load_detail then
       local session_data = {}
+      local item_number = 1
       for _, session_name in ipairs(sessions) do
         local filename = util.get_session_file(session_name, opts.dir)
         local data = files.load_json_file(filename)
         session_data[session_name] = data
+        session_data[session_name].item_number = item_number
+        item_number = item_number + 1
       end
       select_opts.format_item = function(session_name)
         local data = session_data[session_name]
-        local formatted = session_name
+        local formatted = nil
+
+        local pattern = config.detail_separator_left .. "%s" .. config.detail_separator_right
+
         if data then
-          if data.tab_scoped then
-            local tab_cwd = data.tabs[1].cwd
-            formatted = formatted .. string.format(" (tab) [%s]", util.shorten_path(tab_cwd))
-          else
-            formatted = formatted .. string.format(" [%s]", util.shorten_path(data.global.cwd))
+          if data.tab_scoped then -- option load_list_style (tab)
+            if config.load_style == "default" then
+              formatted = session_name .. string.format(" (tab) " .. pattern, util.shorten_path(tab_cwd))
+            elseif config.load_style == "default_numbered" then
+              formatted = data.item_number .. " - " .. session_name .. string.format(" (tab) " .. pattern, util.shorten_path(tab_cwd))
+            elseif config.load_style == "dir_only" then
+              formatted = string.format(" (tab) " .. pattern, util.shorten_path(tab_cwd))
+            elseif config.load_style == "dir_only_numbered" then
+              formatted = data.item_number .. string.format(" - (tab) " .. pattern, util.shorten_path(tab_cwd))
+            end
+          else -- option load_list_style
+            if config.load_style == "default" then
+              formatted = session_name .. string.format(" " .. pattern, util.shorten_path(data.global.cwd))
+            elseif config.load_style == "default_numbered" then
+              formatted = data.item_number .. " - " .. session_name .. string.format(" " .. pattern, util.shorten_path(data.global.cwd))
+            elseif config.load_style == "dir_only" then
+              formatted = string.format(" " .. pattern, util.shorten_path(data.global.cwd))
+            elseif config.load_style == "dir_only_numbered" then
+              formatted = data.item_number .. string.format(" - " .. pattern, util.shorten_path(data.global.cwd))
+            end
           end
         end
         return formatted
