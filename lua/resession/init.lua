@@ -89,9 +89,9 @@ M.list = function(opts)
   if not files.exists(session_dir) then
     return {}
   end
-  ---@diagnostic disable-next-line: param-type-mismatch                   │
+  ---@diagnostic disable-next-line: param-type-mismatch
   local fd = assert(uv.fs_opendir(session_dir, nil, 32))
-  ---@diagnostic disable-next-line: param-type-mismatch                   │
+  ---@diagnostic disable-next-line: cast-type-mismatch
   ---@cast fd luv_dir_t
   local entries = uv.fs_readdir(fd)
   local ret = {}
@@ -433,6 +433,7 @@ M.load = function(name, opts)
 
         if data then
           if data.tab_scoped then -- option load_list_style (tab)
+            local tab_cwd = data.tabs[1].cwd
             if config.load_style == "default" then
               formatted = session_name .. string.format(" (tab) " .. pattern, util.shorten_path(tab_cwd))
             elseif config.load_style == "default_numbered" then
