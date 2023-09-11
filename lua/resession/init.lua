@@ -117,7 +117,7 @@ M.list = function(opts)
     table.sort(ret, function(a, b)
       local file_a = uv.fs_stat(session_dir .. "/" .. a .. ".json") or default
       local file_b = uv.fs_stat(session_dir .. "/" .. b .. ".json") or default
-      return file_a.birthtime.sec > file_b.birthtime.sec
+      return file_a.mtime.sec > file_b.mtime.sec
     end)
   elseif config.load_order == "creation_time" then
     -- Sort by creation_time in descending order (most recent first)
