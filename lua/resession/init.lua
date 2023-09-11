@@ -126,7 +126,7 @@ M.list = function(opts)
     table.sort(ret, function(a, b)
       local file_a = uv.fs_stat(session_dir .. "/" .. a .. ".json")
       local file_b = uv.fs_stat(session_dir .. "/" .. b .. ".json")
-      return file_a.ctime.sec > file_b.ctime.sec
+      return file_a.birthtime.sec > file_b.birthtime.sec
     end)
   end
 
@@ -417,42 +417,20 @@ M.load = function(name, opts)
     local select_opts = { kind = "resession_load", prompt = "Load session" }
     if config.load_detail then
       local session_data = {}
-      local item_number = 1
       for _, session_name in ipairs(sessions) do
         local filename = util.get_session_file(session_name, opts.dir)
         local data = files.load_json_file(filename)
         session_data[session_name] = data
-        session_data[session_name].item_number = item_number
-        item_number = item_number + 1
       end
       select_opts.format_item = function(session_name)
         local data = session_data[session_name]
-        local formatted = nil
-
-        local pattern = config.detail_separator_left .. "%s" .. config.detail_separator_right
-
+        local formatted = session_name
         if data then
-          if data.tab_scoped then -- option load_list_style (tab)
+          if data.tab_scoped then
             local tab_cwd = data.tabs[1].cwd
-            if config.load_style == "default" then
-              formatted = session_name .. string.format(" (tab) " .. pattern, util.shorten_path(tab_cwd))
-            elseif config.load_style == "default_numbered" then
-              formatted = data.item_number .. " - " .. session_name .. string.format(" (tab) " .. pattern, util.shorten_path(tab_cwd))
-            elseif config.load_style == "detail_only" then
-              formatted = string.format(" (tab) " .. pattern, util.shorten_path(tab_cwd))
-            elseif config.load_style == "detail_only_numbered" then
-              formatted = data.item_number .. string.format(" - (tab) " .. pattern, util.shorten_path(tab_cwd))
-            end
-          else -- option load_list_style
-            if config.load_style == "default" then
-              formatted = session_name .. string.format(" " .. pattern, util.shorten_path(data.global.cwd))
-            elseif config.load_style == "default_numbered" then
-              formatted = data.item_number .. " - " .. session_name .. string.format(" " .. pattern, util.shorten_path(data.global.cwd))
-            elseif config.load_style == "detail_only" then
-              formatted = string.format(" " .. pattern, util.shorten_path(data.global.cwd))
-            elseif config.load_style == "detail_only_numbered" then
-              formatted = data.item_number .. string.format(" - " .. pattern, util.shorten_path(data.global.cwd))
-            end
+            formatted = formatted .. string.format(" (tab) [%s]", util.shorten_path(tab_cwd))
+          else
+            formatted = formatted .. string.format(" [%s]", util.shorten_path(data.global.cwd))
           end
         end
         return formatted
