@@ -82,6 +82,7 @@ end
 ---@return string[]
 M.list = function(opts)
   opts = opts or {}
+  local config = require("resession.config")
   local files = require("resession.files")
   local util = require("resession.util")
   local session_dir = util.get_session_dir(opts.dir)
@@ -106,6 +107,27 @@ M.list = function(opts)
     entries = uv.fs_readdir(fd)
   end
   uv.fs_closedir(fd)
+  -- Order options
+  if config.load_order == "filename" then
+    -- Sort by filename
+    table.sort(ret)
+  elseif config.load_order == "modification_time" then
+    -- Sort by modification_time
+    local default = { mtime = { sec = 0 } }
+    table.sort(ret, function(a, b)
+      local file_a = uv.fs_stat(session_dir .. "/" .. a .. ".json") or default
+      local file_b = uv.fs_stat(session_dir .. "/" .. b .. ".json") or default
+      return file_a.mtime.sec > file_b.mtime.sec
+    end)
+  elseif config.load_order == "creation_time" then
+    -- Sort by creation_time in descending order (most recent first)
+    local default = { birthtime = { sec = 0 } }
+    table.sort(ret, function(a, b)
+      local file_a = uv.fs_stat(session_dir .. "/" .. a .. ".json") or default
+      local file_b = uv.fs_stat(session_dir .. "/" .. b .. ".json") or default
+      return file_a.birthtime.sec > file_b.birthtime.sec
+    end)
+  end
   return ret
 end
 

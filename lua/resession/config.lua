@@ -37,6 +37,8 @@ local default_config = {
   -- Show more detail about the sessions when selecting one to load.
   -- Disable if it causes lag.
   load_detail = true,
+  -- List order ["modification_time", "creation_time", "filename"]
+  load_order = "modification_time",
   -- Configuration for extensions
   extensions = {
     quickfix = {},
