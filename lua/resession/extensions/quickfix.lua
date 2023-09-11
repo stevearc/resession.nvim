@@ -20,7 +20,9 @@ M.on_save = function()
 end
 
 M.on_load = function(data)
-  vim.fn.setqflist(data)
+  vim.defer_fn(function()
+    vim.fn.setqflist(data)
+  end, 0)
 end
 
 M.is_win_supported = function(winid, bufnr)
