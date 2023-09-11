@@ -95,7 +95,6 @@ M.list = function(opts)
   ---@cast fd luv_dir_t
   local entries = uv.fs_readdir(fd)
   local ret = {}
-
   while entries do
     for _, entry in ipairs(entries) do
       if entry.type == "file" then
@@ -107,10 +106,8 @@ M.list = function(opts)
     end
     entries = uv.fs_readdir(fd)
   end
-
   uv.fs_closedir(fd)
-
-  -- Apply order
+  -- Order options
   if config.load_order == "filename" then
     -- Sort by filename
     table.sort(ret)
@@ -129,11 +126,8 @@ M.list = function(opts)
       return file_a.birthtime.sec > file_b.birthtime.sec
     end)
   end
-
   return ret
 end
-
-
 
 local function remove_tabpage_session(name)
   for k, v in pairs(tab_sessions) do
