@@ -20,9 +20,7 @@ M.on_save = function()
 end
 
 M.on_load = function(data)
-  vim.defer_fn(function()
-    vim.fn.setqflist(data)
-  end, 0)
+  vim.fn.setqflist(data)
 end
 
 M.is_win_supported = function(winid, bufnr)
@@ -35,7 +33,9 @@ end
 
 M.load_win = function(winid, config)
   vim.api.nvim_set_current_win(winid)
-  vim.cmd("copen")
+  vim.defer_fn(function()
+    vim.cmd("copen")
+  end, 0)
   vim.api.nvim_win_close(winid, true)
   return vim.api.nvim_get_current_win()
 end
