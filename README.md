@@ -224,8 +224,14 @@ end
 
 ---Restore the extension state
 ---@param data The value returned from on_save
-M.on_load = function(data)
-  --
+M.on_pre_load = function(data)
+  -- This is run before the buffers, windows, and tabs are restored
+end
+
+---Restore the extension state
+---@param data The value returned from on_save
+M.on_post_load = function(data)
+  -- This is run after the buffers, windows, and tabs are restored
 end
 
 ---Called when resession gets configured

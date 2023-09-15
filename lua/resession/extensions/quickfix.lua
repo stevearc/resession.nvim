@@ -19,7 +19,7 @@ M.on_save = function()
   end, vim.fn.getqflist())
 end
 
-M.on_load = function(data)
+M.on_pre_load = function(data)
   vim.fn.setqflist(data)
 end
 
