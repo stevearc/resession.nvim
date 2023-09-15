@@ -8,6 +8,7 @@ local uv = vim.uv or vim.loop
 local has_setup = false
 local pending_config
 local current_session
+local current_session_data
 local tab_sessions = {}
 local session_configs = {}
 local hooks = setmetatable({
@@ -67,6 +68,12 @@ end
 M.get_current = function()
   local tabpage = vim.api.nvim_get_current_tabpage()
   return tab_sessions[tabpage] or current_session
+end
+
+---Get the last saved data for the current session
+---@return table?
+M.get_session_data = function()
+  return current_session_data
 end
 
 ---Detach from the current session
@@ -256,6 +263,7 @@ local function save(name, opts, target_tabpage)
   if opts.notify then
     vim.notify(string.format('Saved session "%s"', name))
   end
+  current_session_data = data
   if opts.attach then
     session_configs[name] = {
       dir = opts.dir,
@@ -447,6 +455,7 @@ M.load = function(name, opts)
     end
     return
   end
+  current_session_data = data
   dispatch("pre_load", name, opts)
   _is_loading = true
   if opts.reset == "auto" then
