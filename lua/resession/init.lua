@@ -67,10 +67,7 @@ end
 M.get_current = function()
   local tabpage = vim.api.nvim_get_current_tabpage()
   local session = tab_sessions[tabpage] or current_session
-  if session_configs[session] ~= nil then
-    return session, session_configs[session].dir
-  end
-  return session
+  return session, session_configs[session] and session_configs[session].dir
 end
 
 ---Detach from the current session
