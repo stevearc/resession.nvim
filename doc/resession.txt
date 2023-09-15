@@ -71,10 +71,10 @@ load_extension({name}, {opts})                          *resession.load_extensio
       {opts} `table` Configuration options for extension
 
 get_current(): string                                      *resession.get_current*
-    Get the name of the current session
+    Get the name of the current session and the save directory, if available
 
     Returns:
-      `string` ?
+      `string` ?, string?
 
 detach()                                                        *resession.detach*
     Detach from the current session

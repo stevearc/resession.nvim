@@ -367,14 +367,14 @@ Load an extension some time after calling setup()
 ### get_current()
 
 `get_current(): string` \
-Get the name of the current session
+Get the name of the current session and the save directory, if available
 
 
 Returns:
 
-| Type   | Desc |
-| ------ | ---- |
-| string | ?    |
+| Type   | Desc       |
+| ------ | ---------- |
+| string | ?, string? |
 
 ### detach()
 
