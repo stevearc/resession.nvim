@@ -76,6 +76,12 @@ get_current(): string                                      *resession.get_curren
     Returns:
       `string` ?
 
+get_session_data(): table                             *resession.get_session_data*
+    Get the last saved data for the current session
+
+    Returns:
+      `table` ?
+
 detach()                                                        *resession.detach*
     Detach from the current session
 

@@ -26,6 +26,7 @@ A replacement for `:mksession` with a better API
   - [setup(config)](#setupconfig)
   - [load_extension(name, opts)](#load_extensionname-opts)
   - [get_current()](#get_current)
+  - [get_session_data()](#get_session_data)
   - [detach()](#detach)
   - [list(opts)](#listopts)
   - [delete(name, opts)](#deletename-opts)
@@ -375,6 +376,18 @@ Returns:
 | Type   | Desc |
 | ------ | ---- |
 | string | ?    |
+
+### get_session_data()
+
+`get_session_data(): table` \
+Get the last saved data for the current session
+
+
+Returns:
+
+| Type  | Desc |
+| ----- | ---- |
+| table | ?    |
 
 ### detach()
 
