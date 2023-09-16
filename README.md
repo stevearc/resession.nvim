@@ -462,7 +462,7 @@ Load a session
 **Note:**
 <pre>
 The default value of `reset = "auto"` will reset when loading a normal session, but _not_ when
-loading a tab-scoped session. In addition, the `User` autocommand event `ResessionLoadPost` is emitted upon completion, similar to the way native sessions emit the `SessionLoadPost` event.
+loading a tab-scoped session.
 </pre>
 
 ### add_hook(name, callback)

@@ -168,4 +168,18 @@ M.shorten_path = function(path)
   end
 end
 
+--- Trigger an Resession user event
+---@param event string The event name to be appended to Resession
+---@param delay? boolean Whether or not to delay the event asynchronously (Default: true)
+function M.event(event, delay)
+  local emit_event = function()
+    vim.api.nvim_exec_autocmds("User", { pattern = "Resession" .. event, modeline = false })
+  end
+  if delay == false then
+    emit_event()
+  else
+    vim.schedule(emit_event)
+  end
+end
+
 return M
