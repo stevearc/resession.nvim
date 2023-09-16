@@ -69,8 +69,7 @@ M.get_current = function()
   return tab_sessions[tabpage] or current_session
 end
 
----Detach from the current session,
----emitting the `ResessionDetachPost` User autocmd upon completion
+---Detach from the current session, emitting the `ResessionDetachPost` User autocmd upon completion
 M.detach = function()
   current_session = nil
   local tabpage = vim.api.nvim_get_current_tabpage()
@@ -300,8 +299,7 @@ M.save = function(name, opts)
   require("resession.util").event("SavePost")
 end
 
----Save a tab-scoped session,
----emitting the `ResessionSaveTabPost` User autocmd upon completion
+---Save a tab-scoped session, emitting the `ResessionSaveTabPost` User autocmd upon completion
 ---@param name? string If not provided, will prompt user for session name
 ---@param opts? resession.SaveOpts
 ---    attach? boolean Stay attached to session after saving (default true)
@@ -335,8 +333,7 @@ M.save_tab = function(name, opts)
   require("resession.util").event("SaveTabPost")
 end
 
----Save all current sessions to disk,
----emitting the `ResessionDetachPost` User autocmd upon completion
+---Save all current sessions to disk, emitting the `ResessionDetachPost` User autocmd upon completion
 ---@param opts? table
 ---    notify? boolean
 M.save_all = function(opts)
@@ -392,8 +389,7 @@ local function close_everything()
 end
 
 local _is_loading = false
----Load a session,
----emitting the `ResessionLoadPost` User autocmd upon completion
+---Load a session, emitting the `ResessionLoadPost` User autocmd upon completion
 ---@param name? string
 ---@param opts? resession.LoadOpts
 ---    attach? boolean Stay attached to session after loading (default true)

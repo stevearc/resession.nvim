@@ -385,7 +385,7 @@ Returns:
 ### detach()
 
 `detach()` \
-Detach from the current session
+Detach from the current session, emitting the `ResessionDetachPost` User autocmd upon completion
 
 
 ### list(opts)
@@ -425,7 +425,7 @@ Save a session to disk
 ### save_tab(name, opts)
 
 `save_tab(name, opts)` \
-Save a tab-scoped session
+Save a tab-scoped session, emitting the `ResessionSaveTabPost` User autocmd upon completion
 
 | Param | Type                      | Desc                                               |                                                      |
 | ----- | ------------------------- | -------------------------------------------------- | ---------------------------------------------------- |
@@ -438,7 +438,7 @@ Save a tab-scoped session
 ### save_all(opts)
 
 `save_all(opts)` \
-Save all current sessions to disk
+Save all current sessions to disk, emitting the `ResessionDetachPost` User autocmd upon completion
 
 | Param | Type         | Desc           |     |
 | ----- | ------------ | -------------- | --- |
@@ -448,7 +448,7 @@ Save all current sessions to disk
 ### load(name, opts)
 
 `load(name, opts)` \
-Load a session
+Load a session, emitting the `ResessionLoadPost` User autocmd upon completion
 
 | Param | Type                      | Desc                   |                                                             |
 | ----- | ------------------------- | ---------------------- | ----------------------------------------------------------- |

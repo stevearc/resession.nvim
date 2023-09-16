@@ -168,8 +168,8 @@ M.shorten_path = function(path)
   end
 end
 
---- Trigger an Resession user event
----@param event string The event name to be appended to Resession
+--- Trigger a resession `User` event
+---@param event string The event name to be appended to "Resession"
 ---@param delay? boolean Whether or not to delay the event asynchronously (Default: true)
 function M.event(event, delay)
   local emit_event = function()
