@@ -578,6 +578,9 @@ M.load = function(name, opts)
   -- In case the current buffer has a swapfile, make sure we trigger all the necessary autocmds
   vim.b._resession_need_edit = nil
   vim.cmd.edit({ mods = { emsg_silent = true } })
+
+  -- Emit `User` autocmd event when session has finished loading
+  vim.api.nvim_exec_autocmds("User", { pattern = "ResessionLoadPost", modeline = false })
 end
 
 ---Add a callback that runs at a specific time
