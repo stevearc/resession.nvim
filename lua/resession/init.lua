@@ -69,6 +69,17 @@ M.get_current = function()
   return tab_sessions[tabpage] or current_session
 end
 
+---Get information about the current session
+---@return resession.SessionInfo
+M.get_current_session_info = function()
+  local session_info = {}
+  local session = M.get_current()
+  if session_info[session] ~= nil then
+    session_info.dir = session_info[session].dir
+  end
+  return session_info
+end
+
 ---Detach from the current session
 M.detach = function()
   current_session = nil

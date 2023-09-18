@@ -1,6 +1,5 @@
 ---@class resession.ListOpts
 ---@field dir nil|string Name of directory to save to (overrides config.dir)
----
 
 ---@class resession.DeleteOpts
 ---@field dir nil|string Name of directory to save to (overrides config.dir)
@@ -23,3 +22,7 @@
 ---@field is_win_supported nil|fun(winid: integer, bufnr: integer): boolean
 ---@field save_win nil|fun(winid: integer): any
 ---@field load_win nil|fun(winid: integer, data: any): nil|integer
+
+---@class resession.SessionInfo
+---@field name nil|string Name of the current session
+---@field directory nil|string Name of the directory that the current session is saved in
