@@ -391,7 +391,7 @@ Detach from a session
 | -------------- | --------------------------- | ---- |
 | name           | `nil\|string`               |      |
 | opts           | `nil\|resession.DetachOpts` |      |
-| target_tabpage | `nil\|number`               |      |
+| target_tabpage | `nil\|integer`              |      |
 
 ### list(opts)
 

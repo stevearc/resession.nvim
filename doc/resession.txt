@@ -82,7 +82,7 @@ detach({name}, {opts}, {target_tabpage})                        *resession.detac
     Parameters:
       {name}           `nil|string`
       {opts}           `nil|resession.DetachOpts`
-      {target_tabpage} `nil|number`
+      {target_tabpage} `nil|integer`
 
 list({opts}): string[]                                            *resession.list*
     List all available saved sessions

@@ -92,7 +92,7 @@ end
 ---Detach from a session
 ---@param name? string
 ---@param opts? resession.DetachOpts
----@param target_tabpage? number
+---@param target_tabpage? integer
 M.detach = function(name, opts, target_tabpage)
   opts = vim.tbl_extend("keep", opts or {}, {
     notify = true,
