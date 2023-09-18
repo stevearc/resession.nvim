@@ -76,12 +76,13 @@ get_current(): string                                      *resession.get_curren
     Returns:
       `string` ?
 
-detach({name}, {opts})                                          *resession.detach*
+detach({name}, {opts}, {target_tabpage})                        *resession.detach*
     Detach from a session
 
     Parameters:
-      {name} `nil|string`
-      {opts} `nil|resession.DetachOpts`
+      {name}           `nil|string`
+      {opts}           `nil|resession.DetachOpts`
+      {target_tabpage} `nil|number`
 
 list({opts}): string[]                                            *resession.list*
     List all available saved sessions
