@@ -77,8 +77,7 @@ get_current(): string                                      *resession.get_curren
       `string` ?
 
 detach()                                                        *resession.detach*
-    Detach from the current session, emitting the `ResessionDetachPost` User
-    autocmd upon completion
+    Detach from the current session
 
 
 list({opts}): string[]                                            *resession.list*
@@ -109,8 +108,7 @@ save({name}, {opts})                                              *resession.sav
                    config.dir)
 
 save_tab({name}, {opts})                                      *resession.save_tab*
-    Save a tab-scoped session, emitting the `ResessionSaveTabPost` User autocmd
-    upon completion
+    Save a tab-scoped session
 
     Parameters:
       {name} `nil|string` If not provided, will prompt user for session name
@@ -122,16 +120,14 @@ save_tab({name}, {opts})                                      *resession.save_ta
                    config.dir)
 
 save_all({opts})                                              *resession.save_all*
-    Save all current sessions to disk, emitting the `ResessionDetachPost` User
-    autocmd upon completion
+    Save all current sessions to disk
 
     Parameters:
       {opts} `nil|table`
           {notify} `nil|boolean`
 
 load({name}, {opts})                                              *resession.load*
-    Load a session, emitting the `ResessionLoadPost` User autocmd upon
-    completion
+    Load a session
 
     Parameters:
       {name} `nil|string`
