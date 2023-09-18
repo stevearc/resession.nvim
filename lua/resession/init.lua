@@ -81,18 +81,34 @@ M.get_current = function()
   return tab_sessions[tabpage] or current_session
 end
 
----Detach from the session
+---Detach from a session
 ---@param name? string
-M.detach = function(name)
-  if not name then
+---@param opts? resession.DetachOpts
+M.detach = function(name, opts, target_tabpage)
+  opts = vim.tbl_extend("keep", opts or {}, {
+    notify = true,
+  })
+  if name then
+    for tabnr, session in ipairs(tab_sessions) do
+      if name == session then
+        target_tabpage = tabnr
+      end
+    end
+  elseif target_tabpage then
+    name = tab_sessions[target_tabpage]
+  else
     name = current_session
+    target_tabpage = vim.api.nvim_get_current_tabpage()
   end
-  local tabpage = vim.api.nvim_get_current_tabpage()
-  local is_tab_scoped = tab_sessions[tabpage] ~= nil
-  if name or is_tab_scoped[tabpage] then
+  if name or tab_sessions[target_tabpage] then
     current_session = nil
-    tab_sessions[tabpage] = nil
-    dispatch("post_detach", name, is_tab_scoped)
+    tab_sessions[target_tabpage] = nil
+    if opts.notify then
+      vim.notify(string.format('Detached from session "%s"', name))
+    end
+    dispatch("post_detach", name, opts, target_tabpage)
+  else
+    vim.notify("No session to detach from")
   end
 end
 

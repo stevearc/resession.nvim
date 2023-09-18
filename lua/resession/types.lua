@@ -1,3 +1,6 @@
+---@class resession.DetachOpts
+---@field notify nil|boolean Notify on success or failure
+
 ---@class resession.ListOpts
 ---@field dir nil|string Name of directory to save to (overrides config.dir)
 ---
