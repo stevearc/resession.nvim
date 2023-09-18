@@ -24,5 +24,5 @@
 ---@field load_win nil|fun(winid: integer, data: any): nil|integer
 
 ---@class resession.SessionInfo
----@field name nil|string Name of the current session
----@field directory nil|string Name of the directory that the current session is saved in
+---@field name string Name of the current session
+---@field directory string Name of the directory that the current session is saved in

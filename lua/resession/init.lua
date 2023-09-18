@@ -70,14 +70,14 @@ M.get_current = function()
 end
 
 ---Get information about the current session
----@return resession.SessionInfo
+---@return nil|resession.SessionInfo
 M.get_current_session_info = function()
-  local session_info = {}
   local session = M.get_current()
-  if session_info[session] ~= nil then
-    session_info.dir = session_info[session].dir
+  if not session then
+    return nil
   end
-  return session_info
+  local save_dir = session_configs[session].dir
+  return { name = session, dir = save_dir }
 end
 
 ---Detach from the current session
