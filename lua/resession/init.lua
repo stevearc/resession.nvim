@@ -89,15 +89,6 @@ M.get_current = function()
   return tab_sessions[tabpage] or current_session
 end
 
-local function remove_tabpage_session(name)
-  for tabnr, session in pairs(tab_sessions) do
-    if session == name then
-      tab_sessions[tabnr] = nil
-      break
-    end
-  end
-end
-
 ---Detach from a session
 ---@param name? string
 ---@param opts? resession.DetachOpts
@@ -107,7 +98,11 @@ M.detach = function(name, opts, target_tabpage)
     notify = true,
   })
   if name then
-    remove_tabpage_session(name)
+    for tabnr, session in ipairs(tab_sessions) do
+      if name == session then
+        target_tabpage = tabnr
+      end
+    end
   elseif target_tabpage then
     name = tab_sessions[target_tabpage]
   else
@@ -179,6 +174,15 @@ M.list = function(opts)
     end)
   end
   return ret
+end
+
+local function remove_tabpage_session(name)
+  for k, v in pairs(tab_sessions) do
+    if v == name then
+      tab_sessions[k] = nil
+      break
+    end
+  end
 end
 
 ---Delete a saved session
