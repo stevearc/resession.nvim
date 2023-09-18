@@ -101,7 +101,7 @@ M.list = function(opts)
     return {}
   end
   ---@diagnostic disable-next-line: param-type-mismatch
-  local fd = assert(uv.fs_opendir(session_dir, nil, 32))
+  local fd = assert(uv.fs_opendir(session_dir, nil, 256))
   ---@diagnostic disable-next-line: cast-type-mismatch
   ---@cast fd luv_dir_t
   local entries = uv.fs_readdir(fd)
@@ -478,6 +478,22 @@ M.load = function(name, opts)
     -- Set the options immediately
     util.restore_global_options(data.global.options)
   end
+
+  for ext_name in pairs(config.extensions) do
+    if data[ext_name] then
+      local ext = util.get_extension(ext_name)
+      if ext and ext.on_pre_load then
+        local ok, err = pcall(ext.on_pre_load, data[ext_name])
+        if not ok then
+          vim.notify(
+            string.format("[resession] Extension %s on_pre_load error: %s", ext_name, err),
+            vim.log.levels.ERROR
+          )
+        end
+      end
+    end
+  end
+
   local scale = {
     vim.o.columns / data.global.width,
     (vim.o.lines - vim.o.cmdheight) / data.global.height,
@@ -538,11 +554,11 @@ M.load = function(name, opts)
   for ext_name in pairs(config.extensions) do
     if data[ext_name] then
       local ext = util.get_extension(ext_name)
-      if ext then
-        local ok, err = pcall(ext.on_load, data[ext_name])
+      if ext and ext.on_post_load then
+        local ok, err = pcall(ext.on_post_load, data[ext_name])
         if not ok then
           vim.notify(
-            string.format('[resession] Extension "%s" load error: %s', ext_name, err),
+            string.format('[resession] Extension "%s" on_post_load error: %s', ext_name, err),
             vim.log.levels.ERROR
           )
         end

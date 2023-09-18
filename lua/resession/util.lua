@@ -32,6 +32,10 @@ M.get_extension = function(name)
         return
       end
     end
+    if ext.on_load then
+      -- TODO maybe add some deprecation notice in the future
+      ext.on_post_load = ext.on_load
+    end
     ext_cache[name] = ext
     return ext
   else
