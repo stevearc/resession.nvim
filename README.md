@@ -379,7 +379,7 @@ Returns:
 
 ### get_current_session_info()
 
-`get_current_session_info(): resession.SessionInfo` \
+`get_current_session_info(): nil|resession.SessionInfo` \
 Get information about the current session
 
 

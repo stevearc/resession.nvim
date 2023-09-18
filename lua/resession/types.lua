@@ -25,4 +25,4 @@
 
 ---@class resession.SessionInfo
 ---@field name string Name of the current session
----@field directory string Name of the directory that the current session is saved in
+---@field dir string Name of the directory that the current session is saved in

@@ -76,7 +76,7 @@ get_current(): string                                      *resession.get_curren
     Returns:
       `string` ?
 
-get_current_session_info(): resession.SessionInfo *resession.get_current_session_info*
+get_current_session_info(): nil|resession.SessionInfo *resession.get_current_session_info*
     Get information about the current session
 
 
