@@ -97,21 +97,23 @@ M.detach = function(name, opts, target_tabpage)
   opts = vim.tbl_extend("keep", opts or {}, {
     notify = true,
   })
-  if name then
+  if target_tabpage then
+    name = tab_sessions[target_tabpage]
+  elseif name then
     for tabnr, session in ipairs(tab_sessions) do
       if name == session then
         target_tabpage = tabnr
       end
     end
-  elseif target_tabpage then
-    name = tab_sessions[target_tabpage]
   else
-    name = current_session
+    name = M.get_current()
     target_tabpage = vim.api.nvim_get_current_tabpage()
   end
   if name or tab_sessions[target_tabpage] then
     current_session = nil
-    tab_sessions[target_tabpage] = nil
+    if target_tabpage then
+      tab_sessions[target_tabpage] = nil
+    end
     if opts.notify then
       vim.notify(string.format('Detached from session "%s"', name))
     end
