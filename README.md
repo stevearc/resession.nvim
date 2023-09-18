@@ -26,6 +26,7 @@ A replacement for `:mksession` with a better API
   - [setup(config)](#setupconfig)
   - [load_extension(name, opts)](#load_extensionname-opts)
   - [get_current()](#get_current)
+  - [get_current_session_info()](#get_current_session_info)
   - [detach()](#detach)
   - [list(opts)](#listopts)
   - [delete(name, opts)](#deletename-opts)
@@ -381,6 +382,12 @@ Returns:
 | Type   | Desc |
 | ------ | ---- |
 | string | ?    |
+
+### get_current_session_info()
+
+`get_current_session_info(): nil|resession.SessionInfo` \
+Get information about the current session
+
 
 ### detach()
 

@@ -69,6 +69,17 @@ M.get_current = function()
   return tab_sessions[tabpage] or current_session
 end
 
+---Get information about the current session
+---@return nil|resession.SessionInfo
+M.get_current_session_info = function()
+  local session = M.get_current()
+  if not session then
+    return nil
+  end
+  local save_dir = session_configs[session].dir
+  return { name = session, dir = save_dir }
+end
+
 ---Detach from the current session
 M.detach = function()
   current_session = nil
@@ -258,7 +269,7 @@ local function save(name, opts, target_tabpage)
   end
   if opts.attach then
     session_configs[name] = {
-      dir = opts.dir,
+      dir = opts.dir or config.dir,
     }
   end
   vim.o.eventignore = eventignore
@@ -567,7 +578,7 @@ M.load = function(name, opts)
       current_session = name
     end
     session_configs[name] = {
-      dir = opts.dir,
+      dir = opts.dir or config.dir,
     }
   end
   vim.o.eventignore = eventignore
