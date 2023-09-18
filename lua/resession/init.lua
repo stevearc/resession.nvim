@@ -81,13 +81,18 @@ M.get_current = function()
   return tab_sessions[tabpage] or current_session
 end
 
----Detach from the current session
-M.detach = function()
+---Detach from the session
+---@param name? string
+M.detach = function(name)
+  if not name then
+    name = current_session
+  end
   local tabpage = vim.api.nvim_get_current_tabpage()
-  if current_session or tab_sessions[tabpage] then
+  local is_tab_scoped = tab_sessions[tabpage] ~= nil
+  if name or is_tab_scoped[tabpage] then
     current_session = nil
     tab_sessions[tabpage] = nil
-    dispatch("post_detach")
+    dispatch("post_detach", name, is_tab_scoped)
   end
 end
 
