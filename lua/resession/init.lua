@@ -76,7 +76,7 @@ M.get_current_session_info = function()
   if not session then
     return nil
   end
-  local save_dir = session_configs[session].dir
+  local save_dir = require("resession.util").get_session_dir(session_configs[session].dir)
   return { name = session, dir = save_dir }
 end
 
@@ -269,7 +269,7 @@ local function save(name, opts, target_tabpage)
   end
   if opts.attach then
     session_configs[name] = {
-      dir = opts.dir,
+      dir = opts.dir or config.dir,
     }
   end
   vim.o.eventignore = eventignore
@@ -562,7 +562,7 @@ M.load = function(name, opts)
       current_session = name
     end
     session_configs[name] = {
-      dir = opts.dir,
+      dir = opts.dir or config.dir,
     }
   end
   vim.o.eventignore = eventignore
