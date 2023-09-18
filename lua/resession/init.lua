@@ -62,12 +62,11 @@ M.load_extension = function(name, opts)
   end
 end
 
----Get the name of the current session and the save directory, if available
----@return string?, string?
+---Get the name of the current session
+---@return string?
 M.get_current = function()
   local tabpage = vim.api.nvim_get_current_tabpage()
-  local session = tab_sessions[tabpage] or current_session
-  return session, session_configs[session] and session_configs[session].dir
+  return tab_sessions[tabpage] or current_session
 end
 
 ---Detach from the current session
