@@ -15,6 +15,7 @@ local hooks = setmetatable({
   post_load = {},
   pre_save = {},
   post_save = {},
+  post_detach = {},
 }, {
   __index = function(t, key)
     error(string.format('Unrecognized hook "%s"', key))
@@ -82,9 +83,12 @@ end
 
 ---Detach from the current session
 M.detach = function()
-  current_session = nil
   local tabpage = vim.api.nvim_get_current_tabpage()
-  tab_sessions[tabpage] = nil
+  if current_session or tab_sessions[tabpage] then
+    current_session = nil
+    tab_sessions[tabpage] = nil
+    dispatch("post_detach")
+  end
 end
 
 ---List all available saved sessions
