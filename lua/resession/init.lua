@@ -91,11 +91,18 @@ M.detach = function(name, opts, target_tabpage)
   })
   if target_tabpage then
     name = tab_sessions[target_tabpage]
+    if not name then
+      error(string.format("No session attached to tab %s", target_tabpage))
+    end
   elseif name then
-    for tabnr, session in ipairs(tab_sessions) do
+    for tabnr, session in pairs(tab_sessions) do
       if name == session then
         target_tabpage = tabnr
+        break
       end
+    end
+    if name ~= current_session and not target_tabpage then
+      error(string.format('No session with name "%s"', name))
     end
   else
     name = M.get_current()
@@ -111,7 +118,9 @@ M.detach = function(name, opts, target_tabpage)
     end
     dispatch("post_detach", name, opts, target_tabpage)
   else
-    vim.notify("No session to detach from")
+    if opts.notify then
+      vim.notify("No session to detach from")
+    end
   end
 end
 
