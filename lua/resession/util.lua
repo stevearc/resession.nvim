@@ -171,7 +171,7 @@ end
 --- Trigger a resession `User` event
 ---@param event string The event name to be appended to "Resession"
 ---@param delay? boolean Whether or not to delay the event asynchronously (Default: true)
-function M.event(event, delay)
+M.event = function(event, delay)
   local emit_event = function()
     vim.api.nvim_exec_autocmds("User", { pattern = "Resession" .. event, modeline = false })
   end

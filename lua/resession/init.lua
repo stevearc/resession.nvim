@@ -26,6 +26,17 @@ local function do_setup()
     local conf = pending_config
     pending_config = nil
     require("resession.config").setup(conf)
+
+    local hook_to_event = function(hook)
+      local prefix, suffix = hook:match("([^_]+)_([^_]+)")
+      return suffix:sub(1, 1):upper() .. suffix:sub(2) .. prefix:sub(1, 1):upper() .. prefix:sub(2)
+    end
+    for hook, _ in pairs(hooks) do
+      M.add_hook(hook, function()
+        require("resession.util").event(hook_to_event(hook))
+      end)
+    end
+
     has_setup = true
   end
 end
@@ -69,12 +80,11 @@ M.get_current = function()
   return tab_sessions[tabpage] or current_session
 end
 
----Detach from the current session, emitting the `ResessionDetachPost` User autocmd upon completion
+---Detach from the current session
 M.detach = function()
   current_session = nil
   local tabpage = vim.api.nvim_get_current_tabpage()
   tab_sessions[tabpage] = nil
-  require("resession.util").event("DetachPost")
 end
 
 ---List all available saved sessions
@@ -296,10 +306,9 @@ M.save = function(name, opts)
   else
     current_session = nil
   end
-  require("resession.util").event("SavePost")
 end
 
----Save a tab-scoped session, emitting the `ResessionSaveTabPost` User autocmd upon completion
+---Save a tab-scoped session
 ---@param name? string If not provided, will prompt user for session name
 ---@param opts? resession.SaveOpts
 ---    attach? boolean Stay attached to session after saving (default true)
@@ -330,10 +339,9 @@ M.save_tab = function(name, opts)
   else
     tab_sessions[cur_tabpage] = nil
   end
-  require("resession.util").event("SaveTabPost")
 end
 
----Save all current sessions to disk, emitting the `ResessionDetachPost` User autocmd upon completion
+---Save all current sessions to disk
 ---@param opts? table
 ---    notify? boolean
 M.save_all = function(opts)
@@ -355,7 +363,6 @@ M.save_all = function(opts)
       save(name, vim.tbl_extend("keep", opts, session_configs[name]), tabpage)
     end
   end
-  require("resession.util").event("SaveAllPost")
 end
 
 local function open_clean_tab()
@@ -389,7 +396,7 @@ local function close_everything()
 end
 
 local _is_loading = false
----Load a session, emitting the `ResessionLoadPost` User autocmd upon completion
+---Load a session
 ---@param name? string
 ---@param opts? resession.LoadOpts
 ---    attach? boolean Stay attached to session after loading (default true)
@@ -582,8 +589,6 @@ M.load = function(name, opts)
   -- In case the current buffer has a swapfile, make sure we trigger all the necessary autocmds
   vim.b._resession_need_edit = nil
   vim.cmd.edit({ mods = { emsg_silent = true } })
-
-  require("resession.util").event("LoadPost")
 end
 
 ---Add a callback that runs at a specific time
