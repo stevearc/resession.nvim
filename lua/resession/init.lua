@@ -38,6 +38,14 @@ local function do_setup()
       end)
     end
 
+    vim.api.nvim_create_autocmd("TabClosed", {
+      group = vim.api.nvim_create_augroup("ResessionClearTabSession", { clear = true }),
+      callback = function(args)
+        M.detach(_, _, tonumber(args.file))
+        tab_sessions[tonumber(args.file)] = nil
+      end,
+    })
+
     has_setup = true
   end
 end
