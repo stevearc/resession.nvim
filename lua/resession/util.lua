@@ -168,11 +168,11 @@ M.shorten_path = function(path)
   end
 end
 
---- Trigger a resession `User` event
----@param event string The event name to be appended to "Resession"
+--- Trigger a `User` event
+---@param event string The event name to be emitted
 M.event = function(event)
   local emit_event = function()
-    vim.api.nvim_exec_autocmds("User", { pattern = "Resession" .. event, modeline = false })
+    vim.api.nvim_exec_autocmds("User", { pattern = event, modeline = false })
   end
   vim.schedule(emit_event)
 end

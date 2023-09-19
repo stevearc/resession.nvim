@@ -21,10 +21,10 @@ local hooks = setmetatable({
   end,
 })
 local hook_to_event = {
-  pre_load = "LoadPre",
-  post_load = "LoadPost",
-  pre_save = "SavePre",
-  post_save = "SavePost",
+  pre_load = "ResessionLoadPre",
+  post_load = "ResessionLoadPost",
+  pre_save = "ResessionSavePre",
+  post_save = "ResessionSavePost",
 }
 
 local function do_setup()
