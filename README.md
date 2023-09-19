@@ -26,7 +26,7 @@ A replacement for `:mksession` with a better API
   - [setup(config)](#setupconfig)
   - [load_extension(name, opts)](#load_extensionname-opts)
   - [get_current()](#get_current)
-  - [detach(name, opts, target_tabpage)](#detachname-opts-target_tabpage)
+  - [detach()](#detach)
   - [list(opts)](#listopts)
   - [delete(name, opts)](#deletename-opts)
   - [save(name, opts)](#savename-opts)
@@ -382,16 +382,11 @@ Returns:
 | ------ | ---- |
 | string | ?    |
 
-### detach(name, opts, target_tabpage)
+### detach()
 
-`detach(name, opts, target_tabpage)` \
-Detach from a session
+`detach()` \
+Detach from the current session
 
-| Param          | Type                        | Desc |
-| -------------- | --------------------------- | ---- |
-| name           | `nil\|string`               |      |
-| opts           | `nil\|resession.DetachOpts` |      |
-| target_tabpage | `nil\|integer`              |      |
 
 ### list(opts)
 

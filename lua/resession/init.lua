@@ -15,7 +15,6 @@ local hooks = setmetatable({
   post_load = {},
   pre_save = {},
   post_save = {},
-  post_detach = {},
 }, {
   __index = function(t, key)
     error(string.format('Unrecognized hook "%s"', key))
@@ -26,7 +25,6 @@ local hook_to_event = {
   post_load = "LoadPost",
   pre_save = "SavePre",
   post_save = "SavePost",
-  post_detach = "DetachPost",
 }
 
 local function do_setup()
@@ -85,47 +83,11 @@ M.get_current = function()
   return tab_sessions[tabpage] or current_session
 end
 
----Detach from a session
----@param name? string
----@param opts? resession.DetachOpts
----@param target_tabpage? integer
-M.detach = function(name, opts, target_tabpage)
-  opts = vim.tbl_extend("keep", opts or {}, {
-    notify = true,
-  })
-  if target_tabpage then
-    name = tab_sessions[target_tabpage]
-    if not name then
-      error(string.format("No session attached to tab %s", target_tabpage))
-    end
-  elseif name then
-    for tabnr, session in pairs(tab_sessions) do
-      if name == session then
-        target_tabpage = tabnr
-        break
-      end
-    end
-    if name ~= current_session and not target_tabpage then
-      error(string.format('No session with name "%s"', name))
-    end
-  else
-    name = M.get_current()
-    target_tabpage = vim.api.nvim_get_current_tabpage()
-  end
-  if name or tab_sessions[target_tabpage] then
-    current_session = nil
-    if target_tabpage then
-      tab_sessions[target_tabpage] = nil
-    end
-    if opts.notify then
-      vim.notify(string.format('Detached from session "%s"', name))
-    end
-    dispatch("post_detach", name, opts, target_tabpage)
-  else
-    if opts.notify then
-      vim.notify("No session to detach from")
-    end
-  end
+---Detach from the current session
+M.detach = function()
+  current_session = nil
+  local tabpage = vim.api.nvim_get_current_tabpage()
+  tab_sessions[tabpage] = nil
 end
 
 ---List all available saved sessions
