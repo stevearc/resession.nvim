@@ -143,6 +143,7 @@ local function set_winlayout_data(layout, scale_factor, visit_data)
       vim.o.eventignore = ""
       vim.api.nvim_buf_set_option(bufnr, "filetype", vim.bo[bufnr].filetype)
       vim.o.eventignore = "all"
+      vim.b[bufnr].resession_restore_last_pos = nil
     end
     pcall(vim.api.nvim_win_set_cursor, win.winid, win.cursor)
     util.restore_win_options(win.winid, win.options)

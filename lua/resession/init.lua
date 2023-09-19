@@ -503,10 +503,14 @@ M.load = function(name, opts)
     if buf.loaded then
       vim.fn.bufload(bufnr)
       vim.b[bufnr]._resession_need_edit = true
+      vim.b[bufnr].resession_restore_last_pos = true
       vim.api.nvim_create_autocmd("BufEnter", {
         desc = "Resession: complete setup of restored buffer",
         callback = function(args)
-          pcall(vim.api.nvim_win_set_cursor, 0, buf.last_pos)
+          if vim.b[args.buf].resession_restore_last_pos then
+            pcall(vim.api.nvim_win_set_cursor, 0, buf.last_pos)
+            vim.b[args.buf].resession_restore_last_pos = nil
+          end
           -- This triggers the autocmds that set filetype, syntax highlighting, and checks the swapfile
           if vim.b._resession_need_edit then
             vim.b._resession_need_edit = nil
