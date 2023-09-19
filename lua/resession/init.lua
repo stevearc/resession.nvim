@@ -21,6 +21,13 @@ local hooks = setmetatable({
     error(string.format('Unrecognized hook "%s"', key))
   end,
 })
+local hook_to_event = {
+  pre_load = "LoadPre",
+  post_load = "LoadPost",
+  pre_save = "SavePre",
+  post_save = "SavePost",
+  post_detach = "DetachPost",
+}
 
 local function do_setup()
   if pending_config then
@@ -28,17 +35,14 @@ local function do_setup()
     pending_config = nil
     require("resession.config").setup(conf)
 
-    local hook_to_event = function(hook)
-      local prefix, suffix = hook:match("([^_]+)_([^_]+)")
-      return suffix:sub(1, 1):upper() .. suffix:sub(2) .. prefix:sub(1, 1):upper() .. prefix:sub(2)
+    if not has_setup then
+      for hook, _ in pairs(hooks) do
+        M.add_hook(hook, function()
+          require("resession.util").event(hook_to_event[hook])
+        end)
+      end
+      has_setup = true
     end
-    for hook, _ in pairs(hooks) do
-      M.add_hook(hook, function()
-        require("resession.util").event(hook_to_event(hook))
-      end)
-    end
-
-    has_setup = true
   end
 end
 
