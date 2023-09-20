@@ -168,4 +168,13 @@ M.shorten_path = function(path)
   end
 end
 
+--- Trigger a `User` event
+---@param event string The event name to be emitted
+M.event = function(event)
+  local emit_event = function()
+    vim.api.nvim_exec_autocmds("User", { pattern = event, modeline = false })
+  end
+  vim.schedule(emit_event)
+end
+
 return M
