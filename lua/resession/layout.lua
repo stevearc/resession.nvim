@@ -92,7 +92,7 @@ local function set_winlayout(layout)
     local splitright = vim.opt.splitright
     local splitbelow = vim.opt.splitbelow
     vim.opt.splitright = true
-    vim.opt.splitbottom = true
+    vim.opt.splitbelow = true
     for i in ipairs(layout[2]) do
       if i > 1 then
         if type == "row" then
