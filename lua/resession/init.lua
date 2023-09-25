@@ -407,6 +407,7 @@ local function close_everything()
   end
 
   -- make sure, we are working with a none-floating window
+  -- make sure, we are working with a non-floating window
   local winid = vim.api.nvim_get_current_win()
   vim.cmd("vsplit")
   vim.api.nvim_win_close(winid, true)
