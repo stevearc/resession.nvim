@@ -405,6 +405,12 @@ local function close_everything()
       vim.api.nvim_buf_delete(bufnr, { force = true })
     end
   end
+
+  -- make sure, we are working with a none-floating window
+  local winid = vim.api.nvim_get_current_win()
+  vim.cmd("vsplit")
+  vim.api.nvim_win_close(winid, true)
+
   vim.cmd("silent! tabonly")
   vim.cmd("silent! only")
 end
