@@ -89,6 +89,10 @@ local function set_winlayout(layout)
     end
   else
     local winids = {}
+    local splitright = vim.opt.splitright
+    local splitbelow = vim.opt.splitbelow
+    vim.opt.splitright = true
+    vim.opt.splitbelow = true
     for i in ipairs(layout[2]) do
       if i > 1 then
         if type == "row" then
@@ -99,6 +103,8 @@ local function set_winlayout(layout)
       end
       table.insert(winids, vim.api.nvim_get_current_win())
     end
+    vim.opt.splitright = splitright
+    vim.opt.splitbelow = splitbelow
     for i, v in ipairs(layout[2]) do
       vim.api.nvim_set_current_win(winids[i])
       set_winlayout(v)
