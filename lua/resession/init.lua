@@ -392,7 +392,7 @@ local function open_clean_tab()
       end
     end
   end
-  vim.cmd("tabnew")
+  vim.cmd.tabnew()
 end
 
 local function close_everything()
@@ -405,8 +405,8 @@ local function close_everything()
       vim.api.nvim_buf_delete(bufnr, { force = true })
     end
   end
-  vim.cmd("silent! tabonly")
-  vim.cmd("silent! only")
+  vim.cmd.tabonly({ mods = { emsg_silent = true } })
+  vim.cmd.only({ mods = { emsg_silent = true } })
 end
 
 local _is_loading = false
@@ -547,13 +547,13 @@ M.load = function(name, opts)
   local curwin
   for i, tab in ipairs(data.tabs) do
     if i > 1 then
-      vim.cmd("tabnew")
+      vim.cmd.tabnew()
       -- Tabnew creates a new empty buffer. Dispose of it when hidden.
       vim.bo.buflisted = false
       vim.bo.bufhidden = "wipe"
     end
     if tab.cwd then
-      vim.cmd(string.format("tcd %s", tab.cwd))
+      vim.cmd.tcd({ args = { tab.cwd } })
     end
     local win = layout.set_winlayout(tab.wins, scale)
     if win then
