@@ -396,8 +396,13 @@ local function open_clean_tab()
 end
 
 local function close_everything()
+  local is_floating_win = vim.api.nvim_win_get_config(0).relative ~= ""
+  if is_floating_win then
+    -- Go to the first window, which will not be floating
+    vim.cmd.wincmd({ args = { "w" }, count = 1 })
+  end
+
   local scratch = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_option(scratch, "buflisted", false)
   vim.api.nvim_buf_set_option(scratch, "bufhidden", "wipe")
   vim.api.nvim_win_set_buf(0, scratch)
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
