@@ -103,7 +103,7 @@ end
 
 ---List all available saved sessions
 ---@param opts? resession.ListOpts
----    dir? string Name of directory to save to (overrides config.dir)
+---    dir? string Name of directory to list (overrides config.dir)
 ---@return string[]
 M.list = function(opts)
   opts = opts or {}
@@ -168,7 +168,7 @@ end
 ---Delete a saved session
 ---@param name? string If not provided, prompt for session to delete
 ---@param opts? resession.DeleteOpts
----    dir? string Name of directory to save to (overrides config.dir)
+---    dir? string Name of directory to delete from (overrides config.dir)
 M.delete = function(name, opts)
   opts = opts or {}
   local files = require("resession.files")
@@ -419,7 +419,7 @@ local _is_loading = false
 ---@param name? string
 ---@param opts? resession.LoadOpts
 ---    attach? boolean Stay attached to session after loading (default true)
----    reset? boolean|"auto" Close everthing before loading the session (default "auto")
+---    reset? boolean|"auto" Close everything before loading the session (default "auto")
 ---    silence_errors? boolean Don't error when trying to load a missing session
 ---    dir? string Name of directory to load from (overrides config.dir)
 ---@note

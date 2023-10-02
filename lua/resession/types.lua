@@ -1,8 +1,8 @@
 ---@class (exact) resession.ListOpts
----@field dir? string Name of directory to save to (overrides config.dir)
+---@field dir? string Name of directory to list (overrides config.dir)
 
 ---@class (exact) resession.DeleteOpts
----@field dir? string Name of directory to save to (overrides config.dir)
+---@field dir? string Name of directory to delete from (overrides config.dir)
 
 ---@class (exact) resession.SaveOpts
 ---@field attach? boolean Stay attached to session after saving
@@ -11,7 +11,7 @@
 
 ---@class (exact) resession.LoadOpts
 ---@field attach? boolean Attach to session after loading
----@field reset? boolean|"auto" Close everthing before loading the session (default "auto")
+---@field reset? boolean|"auto" Close everything before loading the session (default "auto")
 ---@field silence_errors? boolean Don't error when trying to load a missing session
 ---@field dir? string Name of directory to load from (overrides config.dir)
 
