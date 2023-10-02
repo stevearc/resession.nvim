@@ -174,7 +174,7 @@ M.delete = function(name, opts)
   local files = require("resession.files")
   local util = require("resession.util")
   if not name then
-    local sessions = M.list()
+    local sessions = M.list({ dir = opts.dir })
     if vim.tbl_isempty(sessions) then
       vim.notify("No saved sessions", vim.log.levels.WARN)
       return
@@ -184,7 +184,7 @@ M.delete = function(name, opts)
       { kind = "resession_delete", prompt = "Delete session" },
       function(selected)
         if selected then
-          M.delete(selected)
+          M.delete(selected, { dir = opts.dir })
         end
       end
     )
@@ -435,7 +435,7 @@ M.load = function(name, opts)
   local layout = require("resession.layout")
   local util = require("resession.util")
   if not name then
-    local sessions = M.list()
+    local sessions = M.list({ dir = opts.dir })
     if vim.tbl_isempty(sessions) then
       vim.notify("No saved sessions", vim.log.levels.WARN)
       return
