@@ -265,7 +265,9 @@ local function save(name, opts, target_tabpage)
   for ext_name, ext_config in pairs(config.extensions) do
     local ext = util.get_extension(ext_name)
     if ext and ext.on_save and (ext_config.enable_in_tab or not target_tabpage) then
-      local ok, ext_data = pcall(ext.on_save)
+      local ok, ext_data = pcall(ext.on_save, {
+        tabpage = target_tabpage,
+      })
       if ok then
         data[ext_name] = ext_data
       else

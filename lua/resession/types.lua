@@ -15,8 +15,11 @@
 ---@field silence_errors? boolean Don't error when trying to load a missing session
 ---@field dir? string Name of directory to load from (overrides config.dir)
 
+---@class (exact) resession.Extension.OnSaveOpts
+---@field tabpage integer? The tabpage being saved, if in a tab-scoped session
+
 ---@class (exact) resession.Extension
----@field on_save? fun():any
+---@field on_save? fun(opts: resession.Extension.OnSaveOpts):any
 ---@field on_pre_load? fun(data: any)
 ---@field on_post_load? fun(data: any)
 ---@field config? fun(options: table)
