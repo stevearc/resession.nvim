@@ -91,7 +91,11 @@ M.get_current_session_info = function()
     return nil
   end
   local save_dir = session_configs[session].dir
-  return { name = session, dir = save_dir }
+  return {
+    name = session,
+    dir = save_dir,
+    tab_scoped = tab_sessions[vim.api.nvim_get_current_tabpage()] ~= nil,
+  }
 end
 
 ---Detach from the current session
