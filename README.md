@@ -218,8 +218,9 @@ To create an extension, create a file in your runtimepath at `lua/resession/exte
 local M = {}
 
 ---Get the saved data for this extension
+---@param opts resession.Extension.OnSaveOpts Information about the session being saved
 ---@return any
-M.on_save = function()
+M.on_save = function(opts)
   return {}
 end
 
