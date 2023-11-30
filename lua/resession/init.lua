@@ -622,14 +622,14 @@ end
 
 ---Add a callback that runs at a specific time
 ---@param name "pre_save"|"post_save"|"pre_load"|"post_load"
----@param callback fun()
+---@param callback fun(...: any)
 M.add_hook = function(name, callback)
   table.insert(hooks[name], callback)
 end
 
 ---Remove a hook callback
 ---@param name "pre_save"|"post_save"|"pre_load"|"post_load"
----@param callback fun()
+---@param callback fun(...: any)
 M.remove_hook = function(name, callback)
   local cbs = hooks[name]
   for i, cb in ipairs(cbs) do
