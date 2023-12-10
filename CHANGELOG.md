@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.2.0](https://github.com/stevearc/resession.nvim/compare/v1.1.1...v1.2.0) (2023-12-10)
+
+
+### Features
+
+* `get_current_session_info()` retrieves more data about session ([#31](https://github.com/stevearc/resession.nvim/issues/31)) ([5fc35f6](https://github.com/stevearc/resession.nvim/commit/5fc35f64823c5b6c4349ee2a8439c1940c522237))
+* add `tab_scoped` prop to `get_current_session_info` dict ([#42](https://github.com/stevearc/resession.nvim/issues/42)) ([f8ffb22](https://github.com/stevearc/resession.nvim/commit/f8ffb22c7f6bf9d2323e013fb481560ec89271e2))
+* configurable sort order in load session selector ([#27](https://github.com/stevearc/resession.nvim/issues/27)) ([6f13bd0](https://github.com/stevearc/resession.nvim/commit/6f13bd0085ba90d85b3d45907524949765686780))
+* emit `User` autocmd events in addition to hooks ([#33](https://github.com/stevearc/resession.nvim/issues/33)) ([959256c](https://github.com/stevearc/resession.nvim/commit/959256ca7ca006db23955120c9eb0948378ad580))
+* extensions can hook into pre or post load ([#30](https://github.com/stevearc/resession.nvim/issues/30)) ([dbcb8fc](https://github.com/stevearc/resession.nvim/commit/dbcb8fc7d49155637ad57a523408a722004081fe))
+* pass `target_tabpage` to `ext.on_save` ([#41](https://github.com/stevearc/resession.nvim/issues/41)) ([6ce009e](https://github.com/stevearc/resession.nvim/commit/6ce009e666d6e65baae116d582c1f537ff5f36e0))
+
+
+### Bug Fixes
+
+* restore cursor to correct position ([d1831b3](https://github.com/stevearc/resession.nvim/commit/d1831b3f1b1e77fb4e92bd750627e17b24d0abd3))
+* restoring session when floating window is focused ([#37](https://github.com/stevearc/resession.nvim/issues/37)) ([31938d8](https://github.com/stevearc/resession.nvim/commit/31938d818f11924da712918cb066937c557ee741))
+* **types:** add varargs to hook callback annotations ([#45](https://github.com/stevearc/resession.nvim/issues/45)) ([c359b89](https://github.com/stevearc/resession.nvim/commit/c359b8936f76016d4957d08014ad8b4cd6b0ff2c))
+* use the provided dir in `load()` and `delete()` ([#39](https://github.com/stevearc/resession.nvim/issues/39)) ([7011f91](https://github.com/stevearc/resession.nvim/commit/7011f91101e4c44f25b230b4b7363eb7363f4e39))
+* window ordering on restore ([#35](https://github.com/stevearc/resession.nvim/issues/35)) ([de240dd](https://github.com/stevearc/resession.nvim/commit/de240ddc9901386e09fdd3b7a4f0e1dc5fb59a30))
+
 ## [1.1.1](https://github.com/stevearc/resession.nvim/compare/v1.1.0...v1.1.1) (2023-09-02)
 
 
