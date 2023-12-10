@@ -481,7 +481,7 @@ Add a callback that runs at a specific time
 | Param    | Type                                               | Desc |
 | -------- | -------------------------------------------------- | ---- |
 | name     | `"pre_save"\|"post_save"\|"pre_load"\|"post_load"` |      |
-| callback | `fun()`                                            |      |
+| callback | `fun(...: any)`                                    |      |
 
 ### remove_hook(name, callback)
 
@@ -491,7 +491,7 @@ Remove a hook callback
 | Param    | Type                                               | Desc |
 | -------- | -------------------------------------------------- | ---- |
 | name     | `"pre_save"\|"post_save"\|"pre_load"\|"post_load"` |      |
-| callback | `fun()`                                            |      |
+| callback | `fun(...: any)`                                    |      |
 
 ### default_buf_filter(bufnr)
 

@@ -155,14 +155,14 @@ add_hook({name}, {callback})                                  *resession.add_hoo
 
     Parameters:
       {name}     `"pre_save"|"post_save"|"pre_load"|"post_load"`
-      {callback} `fun()`
+      {callback} `fun(...: any)`
 
 remove_hook({name}, {callback})                            *resession.remove_hook*
     Remove a hook callback
 
     Parameters:
       {name}     `"pre_save"|"post_save"|"pre_load"|"post_load"`
-      {callback} `fun()`
+      {callback} `fun(...: any)`
 
 default_buf_filter({bufnr}): boolean                *resession.default_buf_filter*
     The default config.buf_filter (takes all buflisted files with "", "acwrite",
