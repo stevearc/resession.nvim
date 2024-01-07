@@ -67,11 +67,13 @@ resession supports all the usual plugin managers
   <summary>Packer</summary>
 
 ```lua
-require('packer').startup(function()
-    use {
-      'stevearc/resession.nvim',
-      config = function() require('resession').setup() end
-    }
+require("packer").startup(function()
+  use({
+    "stevearc/resession.nvim",
+    config = function()
+      require("resession").setup()
+    end,
+  })
 end)
 ```
 
@@ -81,9 +83,9 @@ end)
   <summary>Paq</summary>
 
 ```lua
-require "paq" {
-    {'stevearc/resession.nvim'};
-}
+require("paq")({
+  { "stevearc/resession.nvim" },
+})
 ```
 
 </details>
@@ -101,12 +103,12 @@ git clone --depth=1 https://github.com/stevearc/resession.nvim.git \
 ## Quick start
 
 ```lua
-local resession = require('resession')
+local resession = require("resession")
 resession.setup()
 -- Resession does NOTHING automagically, so we have to set up some keymaps
-vim.keymap.set('n', '<leader>ss', resession.save)
-vim.keymap.set('n', '<leader>sl', resession.load)
-vim.keymap.set('n', '<leader>sd', resession.delete)
+vim.keymap.set("n", "<leader>ss", resession.save)
+vim.keymap.set("n", "<leader>sl", resession.load)
+vim.keymap.set("n", "<leader>sd", resession.delete)
 ```
 
 Now you can use `<leader>ss` to save a session. When you want to load a session, use `<leader>sl`.
@@ -129,7 +131,7 @@ vim.api.nvim_create_autocmd("VimLeavePre", {
 When you are attached to a session (have saved or loaded a session), use this config to periodically re-save that session in the background.
 
 ```lua
-require('resession').setup({
+require("resession").setup({
   autosave = {
     enabled = true,
     interval = 60,
@@ -147,7 +149,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
     -- Only load the session if nvim was started with no args
     if vim.fn.argc(-1) == 0 then
-    -- Save these to a different directory, so our manual sessions don't get polluted
+      -- Save these to a different directory, so our manual sessions don't get polluted
       resession.load(vim.fn.getcwd(), { dir = "dirsession", silence_errors = true })
     end
   end,
@@ -194,9 +196,9 @@ When saving a session, only save the current tab
 
 ```lua
 -- Bind `save_tab` instead of `save`
-vim.keymap.set('n', '<leader>ss', resession.save_tab)
-vim.keymap.set('n', '<leader>sl', resession.load)
-vim.keymap.set('n', '<leader>sd', resession.delete)
+vim.keymap.set("n", "<leader>ss", resession.save_tab)
+vim.keymap.set("n", "<leader>sl", resession.load)
+vim.keymap.set("n", "<leader>sd", resession.delete)
 ```
 
 This will save only the current tabpage layout, but will save _all_ of the open buffers. You can provide a filter to exclude buffers. For example, if you are using `:tcd` to have tabs open for different directories, this will only save buffers in the current tabpage directory:
@@ -205,6 +207,8 @@ This will save only the current tabpage layout, but will save _all_ of the open 
 require("resession").setup({
   tab_buf_filter = function(tabpage, bufnr)
     local dir = vim.fn.getcwd(-1, vim.api.nvim_tabpage_get_number(tabpage))
+    -- ensure dir has trailing /
+    dir = dir:sub(-1) ~= "/" and dir .. "/" or dir
     return vim.startswith(vim.api.nvim_buf_get_name(bufnr), dir)
   end,
 })
@@ -279,8 +283,8 @@ require("resession").setup({
   extensions = {
     myplugin = {
       -- these args will get passed in to M.config()
-    }
-  }
+    },
+  },
 })
 ```
 
@@ -291,8 +295,8 @@ require("resession").setup({
   extensions = {
     myplugin = {
       enable_in_tab = true,
-    }
-  }
+    },
+  },
 })
 ```
 
