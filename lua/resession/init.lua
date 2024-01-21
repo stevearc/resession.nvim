@@ -239,11 +239,15 @@ local function save(name, opts, target_tabpage)
       tabpage_bufs[bufnr] = true
     end
   end
+  local is_unexpected_exit = vim.v.exiting ~= vim.NIL and vim.v.exiting > 0
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
     if util.include_buf(target_tabpage, bufnr, tabpage_bufs) then
       local buf = {
         name = vim.api.nvim_buf_get_name(bufnr),
-        loaded = vim.api.nvim_buf_is_loaded(bufnr),
+        -- if neovim quit unexpectedly, all buffers will appear as unloaded.
+        -- As a hack, we just assume that all of them were loaded, to avoid all of them being
+        -- *unloaded* when the session is restored.
+        loaded = is_unexpected_exit or vim.api.nvim_buf_is_loaded(bufnr),
         options = util.save_buf_options(bufnr),
         last_pos = vim.api.nvim_buf_get_mark(bufnr, '"'),
       }
