@@ -153,6 +153,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
       resession.load(vim.fn.getcwd(), { dir = "dirsession", silence_errors = true })
     end
   end,
+  nested = true,
 })
 vim.api.nvim_create_autocmd("VimLeavePre", {
   callback = function()
