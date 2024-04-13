@@ -153,7 +153,6 @@ vim.api.nvim_create_autocmd("VimEnter", {
       resession.load(vim.fn.getcwd(), { dir = "dirsession", silence_errors = true })
     end
   end,
-  -- Needed to allow autocmds to trigger when loading files (#44)
   nested = true,
 })
 vim.api.nvim_create_autocmd("VimLeavePre", {
