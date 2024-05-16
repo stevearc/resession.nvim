@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.1](https://github.com/stevearc/resession.nvim/compare/v1.2.0...v1.2.1) (2024-05-16)
+
+
+### Bug Fixes
+
+* set buftype='' instead of 'nofile' for empty initial buffer ([#46](https://github.com/stevearc/resession.nvim/issues/46)) ([25b177d](https://github.com/stevearc/resession.nvim/commit/25b177d9068813972996381a6b1ed3df25ba912c))
+* **windows:** dirsession filepath invalid because of colon ([#55](https://github.com/stevearc/resession.nvim/issues/55)) ([7e7fcc7](https://github.com/stevearc/resession.nvim/commit/7e7fcc7d77a634b5e2dc9f6a11c0c5c077966f21))
+* work around bufloaded issue when neovim is killed ([#49](https://github.com/stevearc/resession.nvim/issues/49)) ([742aba4](https://github.com/stevearc/resession.nvim/commit/742aba4998123fc11f490a3aeffe8f550b2cb789))
+
 ## [1.2.0](https://github.com/stevearc/resession.nvim/compare/v1.1.1...v1.2.0) (2023-12-10)
 
 
