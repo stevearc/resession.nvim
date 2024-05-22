@@ -453,10 +453,10 @@ Save a tab-scoped session
 `save_all(opts)` \
 Save all current sessions to disk
 
-| Param | Type         | Desc           |     |
-| ----- | ------------ | -------------- | --- |
-| opts  | `nil\|table` |                |     |
-|       | notify       | `nil\|boolean` |     |
+| Param | Type                         | Desc           |                   |
+| ----- | ---------------------------- | -------------- | ----------------- |
+| opts  | `nil\|resession.SaveAllOpts` |                |                   |
+|       | notify                       | `nil\|boolean` | Notify on success |
 
 ### load(name, opts)
 

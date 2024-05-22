@@ -7,10 +7,10 @@ from nvim_doc_tools import (
     VimdocSection,
     generate_md_toc,
     indent,
-    parse_functions,
+    parse_directory,
     read_section,
-    render_md_api,
-    render_vimdoc_api,
+    render_md_api2,
+    render_vimdoc_api2,
     replace_section,
 )
 
@@ -47,12 +47,13 @@ def get_options_vimdoc() -> "VimdocSection":
 
 def generate_vimdoc():
     doc = Vimdoc("resession.txt", "resession")
-    funcs = parse_functions(os.path.join(ROOT, "lua", "resession", "init.lua"))
+    types = parse_directory(os.path.join(ROOT, "lua"))
+    funcs = types.files["resession/init.lua"].functions
     doc.sections.extend(
         [
             get_options_vimdoc(),
             VimdocSection(
-                "API", "resession-api", render_vimdoc_api("resession", funcs)
+                "API", "resession-api", render_vimdoc_api2("resession", funcs, types)
             ),
         ]
     )
@@ -62,8 +63,9 @@ def generate_vimdoc():
 
 
 def update_md_api():
-    funcs = parse_functions(os.path.join(ROOT, "lua", "resession", "init.lua"))
-    lines = ["\n"] + render_md_api(funcs)
+    types = parse_directory(os.path.join(ROOT, "lua"))
+    funcs = types.files["resession/init.lua"].functions
+    lines = ["\n"] + render_md_api2(funcs, types)
     replace_section(
         README,
         r"^<!-- API -->$",

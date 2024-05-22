@@ -5,9 +5,12 @@
 ---@field dir? string Name of directory to delete from (overrides config.dir)
 
 ---@class (exact) resession.SaveOpts
----@field attach? boolean Stay attached to session after saving
+---@field attach? boolean Stay attached to session after saving (default true)
 ---@field notify? boolean Notify on success
 ---@field dir? string Name of directory to save to (overrides config.dir)
+
+---@class (exact) resession.SaveAllOpts
+---@field notify? boolean Notify on success
 
 ---@class (exact) resession.LoadOpts
 ---@field attach? boolean Attach to session after loading

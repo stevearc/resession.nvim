@@ -128,8 +128,8 @@ save_all({opts})                                              *resession.save_al
     Save all current sessions to disk
 
     Parameters:
-      {opts} `nil|table`
-          {notify} `nil|boolean`
+      {opts} `nil|resession.SaveAllOpts`
+          {notify} `nil|boolean` Notify on success
 
 load({name}, {opts})                                              *resession.load*
     Load a session

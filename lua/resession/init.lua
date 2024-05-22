@@ -107,7 +107,6 @@ end
 
 ---List all available saved sessions
 ---@param opts? resession.ListOpts
----    dir? string Name of directory to list (overrides config.dir)
 ---@return string[]
 M.list = function(opts)
   opts = opts or {}
@@ -172,7 +171,6 @@ end
 ---Delete a saved session
 ---@param name? string If not provided, prompt for session to delete
 ---@param opts? resession.DeleteOpts
----    dir? string Name of directory to delete from (overrides config.dir)
 M.delete = function(name, opts)
   opts = opts or {}
   local files = require("resession.files")
@@ -206,9 +204,6 @@ end
 
 ---@param name string
 ---@param opts resession.SaveOpts
----    attach? boolean Stay attached to session after saving (default true)
----    notify? boolean Notify on success
----    dir? string Name of directory to save to (overrides config.dir)
 ---@param target_tabpage? integer
 local function save(name, opts, target_tabpage)
   local config = require("resession.config")
@@ -303,9 +298,6 @@ end
 ---Save a session to disk
 ---@param name? string
 ---@param opts? resession.SaveOpts
----    attach? boolean Stay attached to session after saving (default true)
----    notify? boolean Notify on success
----    dir? string Name of directory to save to (overrides config.dir)
 M.save = function(name, opts)
   opts = vim.tbl_extend("keep", opts or {}, {
     notify = true,
@@ -335,9 +327,6 @@ end
 ---Save a tab-scoped session
 ---@param name? string If not provided, will prompt user for session name
 ---@param opts? resession.SaveOpts
----    attach? boolean Stay attached to session after saving (default true)
----    notify? boolean Notify on success
----    dir? string Name of directory to save to (overrides config.dir)
 M.save_tab = function(name, opts)
   opts = vim.tbl_extend("keep", opts or {}, {
     notify = true,
@@ -366,8 +355,7 @@ M.save_tab = function(name, opts)
 end
 
 ---Save all current sessions to disk
----@param opts? table
----    notify? boolean
+---@param opts? resession.SaveAllOpts
 M.save_all = function(opts)
   opts = vim.tbl_extend("keep", opts or {}, {
     notify = true,
@@ -396,8 +384,8 @@ local function open_clean_tab()
     if vim.api.nvim_buf_get_name(0) == "" then
       local lines = vim.api.nvim_buf_get_lines(0, -1, 2, false)
       if vim.tbl_isempty(lines) then
-        vim.api.nvim_buf_set_option(0, "buflisted", false)
-        vim.api.nvim_buf_set_option(0, "bufhidden", "wipe")
+        vim.bo[0].buflisted = false
+        vim.bo[0].bufhidden = "wipe"
         return
       end
     end
@@ -413,9 +401,9 @@ local function close_everything()
   end
 
   local scratch = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_option(scratch, "bufhidden", "wipe")
+  vim.bo[scratch].bufhidden = "wipe"
   vim.api.nvim_win_set_buf(0, scratch)
-  vim.api.nvim_buf_set_option(scratch, "buftype", "")
+  vim.bo[scratch].buftype = ""
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
     if vim.bo[bufnr].buflisted then
       vim.api.nvim_buf_delete(bufnr, { force = true })
