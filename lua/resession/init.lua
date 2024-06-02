@@ -384,8 +384,8 @@ local function open_clean_tab()
     if vim.api.nvim_buf_get_name(0) == "" then
       local lines = vim.api.nvim_buf_get_lines(0, -1, 2, false)
       if vim.tbl_isempty(lines) then
-        vim.bo[0].buflisted = false
-        vim.bo[0].bufhidden = "wipe"
+        vim.bo.buflisted = false
+        vim.bo.bufhidden = "wipe"
         return
       end
     end

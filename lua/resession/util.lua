@@ -8,7 +8,7 @@ local function get_option_scope(opt)
   if vim.api.nvim_get_option_info2 then
     return vim.api.nvim_get_option_info2(opt, {}).scope
   else
-    ---@diagnostic disable-next-line: redundant-parameter
+    ---@diagnostic disable-next-line: redundant-parameter, deprecated
     return vim.api.nvim_get_option_info(opt).scope
   end
 end

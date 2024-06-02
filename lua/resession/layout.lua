@@ -147,7 +147,7 @@ local function set_winlayout_data(layout, scale_factor, visit_data)
       vim.api.nvim_win_set_buf(win.winid, bufnr)
       -- After setting the buffer into the window, manually set the filetype to trigger syntax highlighting
       vim.o.eventignore = ""
-      vim.api.nvim_buf_set_option(bufnr, "filetype", vim.bo[bufnr].filetype)
+      vim.bo[bufnr].filetype = vim.bo[bufnr].filetype
       vim.o.eventignore = "all"
       vim.b[bufnr].resession_restore_last_pos = nil
     end
