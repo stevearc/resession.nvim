@@ -151,12 +151,12 @@ local function set_winlayout_data(layout, scale_factor, visit_data)
       vim.o.eventignore = "all"
       vim.b[bufnr].resession_restore_last_pos = nil
     end
-    pcall(vim.api.nvim_win_set_cursor, win.winid, win.cursor)
     util.restore_win_options(win.winid, win.options)
     local width_scale = vim.wo.winfixwidth and 1 or scale_factor[1]
     vim.api.nvim_win_set_width(win.winid, scale(win.width, width_scale))
     local height_scale = vim.wo.winfixheight and 1 or scale_factor[2]
     vim.api.nvim_win_set_height(win.winid, scale(win.height, height_scale))
+    pcall(vim.api.nvim_win_set_cursor, win.winid, win.cursor)
     if win.current then
       visit_data.winid = win.winid
     end
