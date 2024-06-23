@@ -520,6 +520,7 @@ Returns true if a session is currently being loaded
 - [quickfix](lua/resession/extensions/quickfix.lua) (built-in)
 - [aerial.nvim](https://github.com/stevearc/aerial.nvim)
 - [overseer.nvim](https://github.com/stevearc/overseer.nvim)
+- [telescope-resession.nvim](https://github.com/scottmckendry/telescope-resession.nvim)
 
 ## FAQ
 
