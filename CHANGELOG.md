@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/stevearc/resession.nvim/compare/v1.2.1...v1.2.2) (2024-08-16)
+
+
+### Bug Fixes
+
+* restore window cursor pos after setting size ([#57](https://github.com/stevearc/resession.nvim/issues/57)) ([4607595](https://github.com/stevearc/resession.nvim/commit/460759570451a37bd7d9684f5e060016055a89af))
+
 ## [1.2.1](https://github.com/stevearc/resession.nvim/compare/v1.2.0...v1.2.1) (2024-05-16)
 
 
