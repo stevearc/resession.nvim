@@ -104,8 +104,7 @@ end
 ---@param filename string
 M.delete_file = function(filename)
   if M.exists(filename) then
-    uv.fs_unlink(filename)
-    return true
+    return (uv.fs_unlink(filename))
   end
 end
 

@@ -3,10 +3,11 @@
 
 ---@class (exact) resession.DeleteOpts
 ---@field dir? string Name of directory to delete from (overrides config.dir)
+---@field notify? boolean Notify on success (default true)
 
 ---@class (exact) resession.SaveOpts
 ---@field attach? boolean Stay attached to session after saving (default true)
----@field notify? boolean Notify on success
+---@field notify? boolean Notify on success (default true)
 ---@field dir? string Name of directory to save to (overrides config.dir)
 
 ---@class (exact) resession.SaveAllOpts
