@@ -421,6 +421,7 @@ Delete a saved session
 | name  | `nil\|string`               | If not provided, prompt for session to delete |                                                         |
 | opts  | `nil\|resession.DeleteOpts` |                                               |                                                         |
 |       | dir                         | `nil\|string`                                 | Name of directory to delete from (overrides config.dir) |
+|       | notify                      | `nil\|boolean`                                | Notify on success (default true)                        |
 
 ### save(name, opts)
 
@@ -432,7 +433,7 @@ Save a session to disk
 | name  | `nil\|string`             |                |                                                      |
 | opts  | `nil\|resession.SaveOpts` |                |                                                      |
 |       | attach                    | `nil\|boolean` | Stay attached to session after saving (default true) |
-|       | notify                    | `nil\|boolean` | Notify on success                                    |
+|       | notify                    | `nil\|boolean` | Notify on success (default true)                     |
 |       | dir                       | `nil\|string`  | Name of directory to save to (overrides config.dir)  |
 
 ### save_tab(name, opts)

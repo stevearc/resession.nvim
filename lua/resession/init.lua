@@ -172,7 +172,9 @@ end
 ---@param name? string If not provided, prompt for session to delete
 ---@param opts? resession.DeleteOpts
 M.delete = function(name, opts)
-  opts = opts or {}
+  opts = vim.tbl_extend("keep", opts or {}, {
+    notify = true,
+  })
   local files = require("resession.files")
   local util = require("resession.util")
   if not name then
@@ -193,7 +195,11 @@ M.delete = function(name, opts)
     return
   end
   local filename = util.get_session_file(name, opts.dir)
-  if not files.delete_file(filename) then
+  if files.delete_file(filename) then
+    if opts.notify then
+      vim.notify(string.format('Deleted session "%s"', name))
+    end
+  else
     error(string.format('No session "%s"', filename))
   end
   if current_session == name then
