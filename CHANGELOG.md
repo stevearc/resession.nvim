@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/stevearc/resession.nvim/compare/v1.2.1...v1.3.0) (2024-11-28)
+
+
+### Features
+
+* Add `notify` option for deleting a session ([#70](https://github.com/stevearc/resession.nvim/issues/70)) ([35af2d4](https://github.com/stevearc/resession.nvim/commit/35af2d43a712592f8cc94047cb1a7f0a259a2976))
+
+
+### Bug Fixes
+
+* restore window cursor pos after setting size ([#57](https://github.com/stevearc/resession.nvim/issues/57)) ([4607595](https://github.com/stevearc/resession.nvim/commit/460759570451a37bd7d9684f5e060016055a89af))
+
 ## [1.2.1](https://github.com/stevearc/resession.nvim/compare/v1.2.0...v1.2.1) (2024-05-16)
 
 
