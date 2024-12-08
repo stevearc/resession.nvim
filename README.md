@@ -255,7 +255,7 @@ end
 ---@param bufnr integer
 ---@return boolean
 M.is_win_supported = function(winid, bufnr)
-  return true
+  return false
 end
 
 ---Save data for a window
@@ -519,6 +519,7 @@ Returns true if a session is currently being loaded
 ## Extensions
 
 - [quickfix](lua/resession/extensions/quickfix.lua) (built-in)
+- [colorscheme](lua/resession/extensions/colorscheme.lua) (built-in)
 - [aerial.nvim](https://github.com/stevearc/aerial.nvim)
 - [overseer.nvim](https://github.com/stevearc/overseer.nvim)
 - [telescope-resession.nvim](https://github.com/scottmckendry/telescope-resession.nvim) - alternative save/load UI
