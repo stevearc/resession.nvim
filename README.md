@@ -115,6 +115,18 @@ Now you can use `<leader>ss` to save a session. When you want to load a session,
 
 ## Guides
 
+### A guard to store a global variable when using stdin
+
+```lua
+vim.api.nvim_create_autocmd('StdinReadPre', {
+  callback = function()
+    -- Store a global we can refer to in other autocmd
+    vim.g.using_stdin = true
+  end,
+  nested = true,
+})    
+```
+
 ### Automatically save a session when you exit Neovim
 
 ```lua
@@ -147,6 +159,10 @@ Load a dir-specific session when you open Neovim, save it when you exit.
 ```lua
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
+    -- here you could use the guard from the start of the guide
+    -- if vim.g.using_stdin then
+    --   return
+    -- end
     -- Only load the session if nvim was started with no args
     if vim.fn.argc(-1) == 0 then
       -- Save these to a different directory, so our manual sessions don't get polluted
