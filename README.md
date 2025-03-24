@@ -528,7 +528,7 @@ Returns true if a session is currently being loaded
 - [colorscheme](lua/resession/extensions/colorscheme.lua) (built-in)
 - [aerial.nvim](https://github.com/stevearc/aerial.nvim)
 - [overseer.nvim](https://github.com/stevearc/overseer.nvim)
-- [telescope-resession.nvim](https://github.com/scottmckendry/telescope-resession.nvim) - alternative save/load UI
+- [pick-resession.nvim](https://github.com/scottmckendry/pick-resession.nvim) - alternative save/load UI
 
 ## FAQ
 
