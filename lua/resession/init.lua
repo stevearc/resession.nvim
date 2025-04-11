@@ -522,8 +522,12 @@ M.load = function(name, opts)
     vim.o.columns / data.global.width,
     (vim.o.lines - vim.o.cmdheight) / data.global.height,
   }
+
+  local last_bufnr
   for _, buf in ipairs(data.buffers) do
     local bufnr = vim.fn.bufadd(buf.name)
+    last_bufnr = bufnr
+
     if buf.loaded then
       vim.fn.bufload(bufnr)
       vim.b[bufnr]._resession_need_edit = true
@@ -574,9 +578,12 @@ M.load = function(name, opts)
     end
   end
 
-  -- This can be nil if we saved a session in a window with an unsupported buffer
+  -- curwin can be nil if we saved a session in a window with an unsupported buffer, in which case we will switch to
+  -- the last restored buffer.
   if curwin then
     vim.api.nvim_set_current_win(curwin)
+  elseif last_bufnr then
+    vim.cmd("buffer " .. last_bufnr)
   end
 
   for ext_name in pairs(config.extensions) do
