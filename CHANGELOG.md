@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.0](https://github.com/stevearc/resession.nvim/compare/v1.2.1...v1.3.0) (2025-06-01)
+
+
+### Features
+
+* Add `notify` option for deleting a session ([#70](https://github.com/stevearc/resession.nvim/issues/70)) ([35af2d4](https://github.com/stevearc/resession.nvim/commit/35af2d43a712592f8cc94047cb1a7f0a259a2976))
+* extension to restore colorscheme ([#67](https://github.com/stevearc/resession.nvim/issues/67)) ([18f507c](https://github.com/stevearc/resession.nvim/commit/18f507c42e213918ec28bf6ed9a5ec33990c0e95))
+
+
+### Bug Fixes
+
+* fallback to last buffer if window empty ([#74](https://github.com/stevearc/resession.nvim/issues/74)) ([84c81e5](https://github.com/stevearc/resession.nvim/commit/84c81e5fd8a94dc85a60b97089536174e558e288))
+* restore window cursor pos after setting size ([#57](https://github.com/stevearc/resession.nvim/issues/57)) ([4607595](https://github.com/stevearc/resession.nvim/commit/460759570451a37bd7d9684f5e060016055a89af))
+
 ## [1.2.1](https://github.com/stevearc/resession.nvim/compare/v1.2.0...v1.2.1) (2024-05-16)
 
 
