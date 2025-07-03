@@ -621,6 +621,9 @@ M.load = function(name, opts)
   _is_loading = false
   dispatch("post_load", name, opts)
 
+  vim.api.nvim_exec_autocmds("BufReadPre", {})
+  vim.api.nvim_exec_autocmds("BufRead", {})
+
   -- In case the current buffer has a swapfile, make sure we trigger all the necessary autocmds
   vim.b._resession_need_edit = nil
   vim.cmd.edit({ mods = { emsg_silent = true } })
