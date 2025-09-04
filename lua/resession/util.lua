@@ -141,7 +141,8 @@ end
 ---@return string
 M.get_session_file = function(name, dirname)
   local files = require("resession.files")
-  local filename = string.format("%s.json", name:gsub(files.sep, "_"):gsub(":", "_"))
+  local filename =
+    string.format("%s.json", name:gsub("_", "++"):gsub(files.sep, "_"):gsub(":", "_"))
   return files.join(M.get_session_dir(dirname), filename)
 end
 
