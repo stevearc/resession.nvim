@@ -138,7 +138,7 @@ load({name}, {opts})                                              *resession.loa
     Parameters:
       {name} `nil|string`
       {opts} `nil|resession.LoadOpts`
-          {attach}         `nil|boolean` Stay attached to session after loading
+          {attach}         `nil|boolean` Attach to session after loading
                            (default true)
           {reset}          `nil|boolean|"auto"` Close everything before loading
                            the session (default "auto")

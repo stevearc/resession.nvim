@@ -1,8 +1,5 @@
 local M = {}
 
--- TODO remove after https://github.com/folke/neodev.nvim/pull/163 lands
----@diagnostic disable: inject-field
-
 local uv = vim.uv or vim.loop
 
 local has_setup = false
@@ -119,8 +116,6 @@ M.list = function(opts)
   end
   ---@diagnostic disable-next-line: param-type-mismatch
   local fd = assert(uv.fs_opendir(session_dir, nil, 256))
-  ---@diagnostic disable-next-line: cast-type-mismatch
-  ---@cast fd luv_dir_t
   local entries = uv.fs_readdir(fd)
   local ret = {}
   while entries do
@@ -423,10 +418,6 @@ local _is_loading = false
 ---Load a session
 ---@param name? string
 ---@param opts? resession.LoadOpts
----    attach? boolean Stay attached to session after loading (default true)
----    reset? boolean|"auto" Close everything before loading the session (default "auto")
----    silence_errors? boolean Don't error when trying to load a missing session
----    dir? string Name of directory to load from (overrides config.dir)
 ---@note
 --- The default value of `reset = "auto"` will reset when loading a normal session, but _not_ when
 --- loading a tab-scoped session.

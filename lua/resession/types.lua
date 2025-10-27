@@ -14,7 +14,7 @@
 ---@field notify? boolean Notify on success
 
 ---@class (exact) resession.LoadOpts
----@field attach? boolean Attach to session after loading
+---@field attach? boolean Attach to session after loading (default true)
 ---@field reset? boolean|"auto" Close everything before loading the session (default "auto")
 ---@field silence_errors? boolean Don't error when trying to load a missing session
 ---@field dir? string Name of directory to load from (overrides config.dir)

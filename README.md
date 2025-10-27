@@ -474,7 +474,7 @@ Load a session
 | --------------- | ------------------------- | ------------------------------------------------------------ |
 | name            | `nil\|string`             |                                                              |
 | opts            | `nil\|resession.LoadOpts` |                                                              |
-| >attach         | `nil\|boolean`            | Stay attached to session after loading (default true)        |
+| >attach         | `nil\|boolean`            | Attach to session after loading (default true)               |
 | >reset          | `nil\|boolean\|"auto"`    | Close everything before loading the session (default "auto") |
 | >silence_errors | `nil\|boolean`            | Don't error when trying to load a missing session            |
 | >dir            | `nil\|string`             | Name of directory to load from (overrides config.dir)        |
