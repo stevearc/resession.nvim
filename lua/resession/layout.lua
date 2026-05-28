@@ -39,6 +39,7 @@ M.get_win_info = function(tabnr, winid, current_win)
     width = vim.api.nvim_win_get_width(winid),
     height = vim.api.nvim_win_get_height(winid),
     options = util.save_win_options(winid),
+    altfile = vim.api.nvim_win_call(winid, function() return vim.fn.getreg("#") end),
   })
   local winnr = vim.api.nvim_win_get_number(winid)
   if vim.fn.haslocaldir(winnr, tabnr) == 1 then
@@ -150,6 +151,9 @@ local function set_winlayout_data(layout, scale_factor, visit_data)
       vim.bo[bufnr].filetype = vim.bo[bufnr].filetype
       vim.o.eventignore = "all"
       vim.b[bufnr].resession_restore_last_pos = nil
+    end
+    if win.altfile and win.altfile ~= "" then
+      pcall(vim.fn.setreg, "#", win.altfile)
     end
     util.restore_win_options(win.winid, win.options)
     local width_scale = vim.wo.winfixwidth and 1 or scale_factor[1]
