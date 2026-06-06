@@ -145,10 +145,6 @@ local function set_winlayout_data(layout, scale_factor, visit_data)
     else
       local bufnr = vim.fn.bufadd(win.bufname)
       vim.api.nvim_win_set_buf(win.winid, bufnr)
-      -- After setting the buffer into the window, manually set the filetype to trigger syntax highlighting
-      vim.o.eventignore = ""
-      vim.bo[bufnr].filetype = vim.bo[bufnr].filetype
-      vim.o.eventignore = "all"
       vim.b[bufnr].resession_restore_last_pos = nil
     end
     util.restore_win_options(win.winid, win.options)
