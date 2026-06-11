@@ -227,7 +227,10 @@ local function save(name, opts, target_tabpage)
       options = target_tabpage and {} or util.save_global_options(),
     },
   }
-  local current_win = vim.api.nvim_get_current_win()
+  if vim.fn.mode():match("[vV\22]") ~= nil then
+    -- Prefer not saving rather than disrupting visual mode workflow
+    return
+  end
   local tabpage_bufs = {}
   if target_tabpage then
     for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(target_tabpage)) do
